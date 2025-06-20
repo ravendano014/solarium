@@ -1,2 +1,1006 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+
+
+
+  <title>Space Globe 2</title>
+
+
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  background-image: url("https://i.ibb.co/rm2ZShj/sky1.jpg");
+  background-size: cover;
+  backdrop-filter: brightness(40%);
+}
+
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  color: white;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.webgl {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  outline: none;
+
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100vh;
+  }
+}
+
+.btn {
+  position: fixed;
+  bottom: 20px;
+  transform: translateY(-50%);
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  text-decoration: none;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.05);
+  }
+}
+
+.btn-left {
+  left: 30px;
+}
+
+.btn-right {
+  right: 30px;
+}
+
+.btn-center-bottom {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+}
+
+.btn-center-top {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 80px; /* Below banner, adjusted for gravity status */
+}
+
+.btn-bottom-left-offset {
+    bottom: 80px; /* Offset from bottom */
+    left: 30px;
+    transform: translateY(0); /* No Y transform */
+}
+
+
+.info-panel {
+  position: fixed;
+  top: 60px; /* Below the banner */
+  left: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  z-index: 10;
+  max-width: 250px;
+  line-height: 1.5;
+  transition: opacity 0.3s ease;
+  opacity: 0; /* Start hidden */
+  pointer-events: none; /* Do not block clicks */
+}
+
+.info-panel.visible {
+  opacity: 1;
+}
+
+.gravity-status {
+    position: fixed;
+    top: 60px; /* Below the banner */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    z-index: 10;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* New styles for Info/Help Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 25px;
+    color: white;
+    font-family: Arial, sans-serif;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.visible .modal-content {
+    transform: translateY(0);
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00ffff; /* Cyan for heading */
+}
+
+.modal-content p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.modal-content ul {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+.modal-content li {
+    margin-bottom: 5px;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    color: #00ffff;
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+
+</head>
+
+<body translate="no">
+  <div class="banner">¡Haz clic en el espacio para sembrar un cuerpo celeste! Puedes hacer zoom y arrastrar para explorar.</div>
+<a href="https://www.isladjan.com/about/" class="btn btn-left" target="_blank">My Works</a>
+<button class="btn btn-right" id="fullscreenBtn">Go Fullscreen</button>
+<button class="btn btn-center-bottom" id="resetBtn">Reiniciar Simulación</button>
+<button class="btn btn-center-top" id="gravityToggleBtn">Gravedad: ON</button>
+<button class="btn btn-bottom-left-offset" id="infoHelpBtn">Información / Ayuda</button>
+
+<div class="webgl"></div>
+<div id="infoPanel" class="info-panel"></div>
+
+<div id="infoHelpModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+        <h2>Información y Ayuda de la Simulación Espacial</h2>
+        <p>¡Bienvenido a esta simulación interactiva del espacio! Aquí puedes crear tus propios cuerpos celestes y observar su movimiento.</p>
+
+        <h3>Cómo Interactuar:</h3>
+        <ul>
+            <li><strong>Clic en el espacio:</strong> Crea un nuevo cuerpo celeste en el punto donde hagas clic.</li>
+            <li><strong>Arrastrar con el ratón:</strong> Rota la vista de la cámara alrededor del centro de la simulación.</li>
+            <li><strong>Rueda del ratón (scroll):</strong> Acercar o alejar la vista (zoom).</li>
+            <li><strong>Clic en un objeto:</strong> Muestra información detallada sobre el cuerpo celeste seleccionado en el panel izquierdo.</li>
+        </ul>
+
+        <h3>Cuerpos Celestes:</h3>
+        <p>La simulación genera diferentes tipos de objetos con propiedades variadas:</p>
+        <ul>
+            <li><strong>Estrellas:</strong> Puntos o esferas brillantes, algunos estáticos.</li>
+            <li><strong>Planetas:</strong> Esferas que intentan orbitar alrededor del Sol y dejan un rastro.</li>
+            <li><strong>Lunas:</strong> Esferas más pequeñas, similares a planetas.</li>
+            <li><strong>Asteroides:</strong> Pequeños cúmulos de partículas rocosas.</li>
+        </ul>
+
+        <h3>Características Adicionales:</h3>
+        <ul>
+            <li><strong>Reiniciar Simulación:</strong> El botón "Reiniciar Simulación" limpia todos los cuerpos celestes generados.</li>
+            <li><strong>Gravedad (ON/OFF):</strong> El botón "Gravedad: ON/OFF" activa o desactiva una fuerza de atracción simplificada hacia el Sol para los planetas. Observa cómo cambia su comportamiento con y sin gravedad.</li>
+        </ul>
+
+        <p><strong>Nota importante:</strong> Esta es una simulación visual y simplificada. La física utilizada no es una simulación de N-cuerpos científicamente precisa, pero permite explorar conceptos básicos de movimiento y atracción en el espacio.</p>
+    </div>
+</div>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+    }
+  }
+</script>
+
+      <script id="rendered-js" type="module">
+//Author: isladjan - https://isladjan.com/
+//Modified by Gemini AI for interactive celestial body creation.
+
+import * as THREE from 'three';
+import { createNoise2D } from "https://esm.sh/simplex-noise";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js'; // Import Lensflare
+
+class Effect {
+  constructor() {
+    this.nucleusPosition = null;
+    this.originalY = null; // Unused in new version, kept for legacy if needed
+    this.time = null;
+    this.delta = 0;
+    this.textures = {};
+    this.celestialBodies = []; // Array to store dynamically created celestial bodies
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+    this.MAX_TRAIL_POINTS = 200; // Max points for planet trails
+    this.infoPanel = document.getElementById('infoPanel'); // Get info panel element
+    this.tempEffects = []; // Array to manage temporary visual effects
+    this.gravityEnabled = true; // New state for gravity toggle
+    this.gravityToggleBtn = document.getElementById('gravityToggleBtn'); // Get gravity toggle button
+    this.infoHelpModal = document.getElementById('infoHelpModal'); // Get info/help modal
+    this.infoHelpBtn = document.getElementById('infoHelpBtn'); // Get info/help button
+    this.modalCloseBtn = document.getElementById('modalCloseBtn'); // Get modal close button
+  }
+
+  //MARK: -init
+  async init() {
+    this.threeInit();
+    this.texturePromise = this.textureLoader();
+    this.createElements();
+    this.initFullscreenButton();
+    this.initResetButton(); // Initialize the reset button
+    this.initGravityToggleButton(); // Initialize the gravity toggle button
+    this.initInfoHelpModal(); // Initialize the info/help modal
+    this.bannerInit();
+    this.addClickListener(); // Add click listener for interactive creation
+
+    await this.texturePromise;
+    // Apply textures to initial elements
+    this.sphereBg.material.map = this.textures.sky;
+    this.addSunFlare(); // Add lens flare after textures are loaded
+
+    // Uses ResizeObserver to handle responsive resizing
+    const container = document.querySelector(".webgl");
+    this.resizeObserver = new ResizeObserver(() => this.onResize());
+    this.resizeObserver.observe(container);
+
+    // Limit rendering to a certain frame interval
+    this.limitFPS(1 / 60);
+  }
+
+  initFullscreenButton() {
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    fullscreenBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+  }
+
+  initResetButton() {
+    const resetBtn = document.getElementById("resetBtn");
+    resetBtn.addEventListener("click", () => {
+      this.resetSimulation();
+    });
+  }
+
+  //MARK: -initGravityToggleButton
+  initGravityToggleButton() {
+    this.updateGravityButtonText(); // Set initial text
+    this.gravityToggleBtn.addEventListener("click", () => {
+      this.toggleGravity();
+    });
+  }
+
+  //MARK: -toggleGravity
+  toggleGravity() {
+    this.gravityEnabled = !this.gravityEnabled;
+    this.updateGravityButtonText();
+  }
+
+  //MARK: -updateGravityButtonText
+  updateGravityButtonText() {
+    this.gravityToggleBtn.textContent = `Gravedad: ${this.gravityEnabled ? 'ON' : 'OFF'}`;
+  }
+
+  //MARK: -initInfoHelpModal
+  initInfoHelpModal() {
+    this.infoHelpBtn.addEventListener('click', () => {
+        this.infoHelpModal.classList.add('visible');
+    });
+
+    this.modalCloseBtn.addEventListener('click', () => {
+        this.infoHelpModal.classList.remove('visible');
+    });
+
+    // Close modal if clicking outside content
+    this.infoHelpModal.addEventListener('click', (event) => {
+        if (event.target === this.infoHelpModal) {
+            this.infoHelpModal.classList.remove('visible');
+        }
+    });
+  }
+
+  //MARK: -resetSimulation
+  resetSimulation() {
+    // Remove all celestial bodies from the scene
+    this.celestialBodies.forEach(body => {
+      this.scene.remove(body);
+      // Dispose of geometries and materials to free up memory
+      if (body.geometry) body.geometry.dispose();
+      if (body.material) {
+        if (Array.isArray(body.material)) {
+          body.material.forEach(m => m.dispose());
+        } else {
+          body.material.dispose();
+        }
+      }
+      // Remove trail line if it exists
+      if (body.userData.trail && body.userData.trail.line) {
+          this.scene.remove(body.userData.trail.line);
+          if (body.userData.trail.line.geometry) body.userData.trail.line.geometry.dispose();
+          if (body.userData.trail.line.material) body.userData.trail.line.material.dispose();
+      }
+    });
+    this.celestialBodies = []; // Clear the array
+
+    // Clear any active temporary effects
+    this.tempEffects.forEach(effect => {
+        this.scene.remove(effect.mesh);
+        if (effect.mesh.geometry) effect.mesh.geometry.dispose();
+        if (effect.mesh.material) effect.mesh.material.dispose();
+    });
+    this.tempEffects = [];
+
+    this.clearObjectInfo(); // Clear info panel
+    // Optionally reset camera or controls if desired
+    this.camera.position.set(0, 0, 150);
+    this.controls.update(); // Update controls to reflect camera change
+  }
+
+  //MARK: -threeInit
+  // Sets up the core Three.js components: renderer, scene, camera, lighting, controls
+  threeInit() {
+    const container = document.querySelector(".webgl");
+
+    this.renderer = new THREE.WebGLRenderer({
+      powerPreference: "high-performance",
+      alpha: true,
+      antialias: true,
+      stencil: false });
+
+    this.renderer.setSize(container.clientWidth, container.clientHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(this.renderer.domElement);
+
+    this.scene = new THREE.Scene();
+
+    this.camera = new THREE.PerspectiveCamera(
+    55,
+    window.innerWidth / window.innerHeight,
+    0.01,
+    1000);
+
+    this.camera.position.set(0, 0, 150);
+
+    this.clock = new THREE.Clock();
+
+    const directionalLight = new THREE.DirectionalLight("#fff", 3);
+    directionalLight.position.set(0, 50, -20);
+    this.scene.add(directionalLight);
+
+    let ambientLight = new THREE.AmbientLight("#ffffff", 1);
+    ambientLight.position.set(0, -20, -40);
+    this.scene.add(ambientLight);
+
+    // OrbitControls automatically rotates the camera around the scene
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.autoRotate = true;
+    this.controls.autoRotateSpeed = 0.8; // Faster auto-rotation
+    this.controls.maxDistance = 350;
+    this.controls.minDistance = 150;
+    this.controls.enablePan = false;
+  }
+
+  //MARK: -textureLoader
+  // Loads all textures asynchronously
+  textureLoader() {
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.crossOrigin = 'anonymous';
+    const textureMap = {
+      sky: "https://i.ibb.co/HC0vxMw/sky2.jpg",
+      star: "https://i.ibb.co/NpJzwns/star.jpg",
+      flare1: "https://i.ibb.co/TRsJ1tm/p1.png", // Star/Asteroid particle
+      flare2: "https://i.ibb.co/YQcTCRG/p2.png", // Star/Asteroid particle
+      flare3: "https://i.ibb.co/v1S8YW7/p7.png", // Comet/Small Star particle
+      planet1: "https://i.ibb.co/s1cZDnM/planet1.webp",
+      planet2: "https://i.ibb.co/Lt5Kn7y/planet2.webp",
+      planet3: "https://i.ibb.co/T8V57p4/planet3.webp"
+    };
+
+
+    return Promise.all(
+    Object.entries(textureMap).map(([key, path]) => {
+      return new Promise((resolve, reject) => {
+        textureLoader.load(
+        path,
+        texture => {
+          texture.colorSpace = THREE.SRGBColorSpace;
+          texture.anisotropy = 16;
+          this.textures[`${key}`] = texture;
+          resolve(true);
+        },
+        undefined,
+        error => reject(`Error loading texture ${path}: ${error}`));
+
+      });
+    }));
+
+  }
+
+  //MARK: -addSunFlare
+  addSunFlare() {
+    const lensflare = new Lensflare();
+    lensflare.addElement(new LensflareElement(this.textures.star, 100, 0, new THREE.Color(0xFFF8E7))); // Main halo
+    lensflare.addElement(new LensflareElement(this.textures.flare1, 60, 0.6));
+    lensflare.addElement(new LensflareElement(this.textures.flare2, 70, 0.7));
+    lensflare.addElement(new LensflareElement(this.textures.flare3, 120, 0.9));
+    lensflare.addElement(new LensflareElement(this.textures.flare1, 70, 1));
+    this.nucleus.add(lensflare); // Add lensflare to the sun object
+  }
+
+  //MARK: -createElements
+  // Builds the main nucleus and background spheres
+  createElements() {
+    /* Nucleus (Sun) */
+    let sphereGeometry = new THREE.SphereGeometry(20, 64, 64); // More spherical geometry
+    this.originalPositions = new Float32Array(sphereGeometry.attributes.position.array); // Store original positions for deformation
+
+    let sunMaterial = new THREE.MeshPhongMaterial({
+        color: 0xFFF8E7, // Base color for the sun
+        emissive: 0xFFA500, // Strong orange emissive color for glow
+        emissiveIntensity: 1.5, // How strong the emissive light is
+        shininess: 0 // No shininess for a glowing object
+    });
+
+    this.nucleus = new THREE.Mesh(sphereGeometry, sunMaterial);
+    this.nucleus.position.set(0, 0, 0);
+    this.nucleus.userData = { // Add userData for the Sun
+        type: 'star',
+        name: 'El Sol',
+        size: 20,
+        velocity: new THREE.Vector3(0,0,0) // Sun is static for simplicity
+    };
+    this.scene.add(this.nucleus);
+
+    // Noise generator initialization
+    this.noise = createNoise2D();
+    this.blobScale = 0.5; // Reduced scale for smoother sun
+
+    /* Sphere Background 1 */
+    let geometrySphereBg = new THREE.SphereGeometry(90, 50, 50);
+    let materialSphereBg = new THREE.MeshBasicMaterial({
+      side: THREE.BackSide });
+
+    this.sphereBg = new THREE.Mesh(geometrySphereBg, materialSphereBg);
+    this.sphereBg.position.set(0, 0, 0);
+    this.scene.add(this.sphereBg);
+  }
+
+  //MARK: -addClickListener
+  addClickListener() {
+    this.renderer.domElement.addEventListener('pointerdown', (event) => {
+      // Normalize mouse coordinates to [-1, 1] range for Three.js
+      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // Update the picking ray with the camera and mouse position
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+
+      // Check for intersections with existing celestial bodies and the Sun
+      const intersects = this.raycaster.intersectObjects([...this.celestialBodies, this.nucleus], true);
+
+      if (intersects.length > 0) {
+        // An object was clicked, display its info
+        const clickedObject = intersects[0].object;
+        this.displayObjectInfo(clickedObject);
+      } else {
+        // No object clicked, clear info panel and create a new one
+        this.clearObjectInfo();
+        const distance = 100; // Distance from camera where new objects will appear
+        const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -distance);
+        const intersectionPoint = new THREE.Vector3();
+        this.raycaster.ray.intersectPlane(plane, intersectionPoint);
+
+        if (intersectionPoint) {
+          this.createCelestialBody(intersectionPoint);
+        }
+      }
+    });
+  }
+
+  //MARK: -displayObjectInfo
+  displayObjectInfo(object) {
+    if (!object.userData) {
+      this.clearObjectInfo();
+      return;
+    }
+
+    let infoHTML = `<h3>Información del Cuerpo Celeste</h3>`;
+    infoHTML += `<p><strong>Tipo:</strong> ${object.userData.type.charAt(0).toUpperCase() + object.userData.type.slice(1)}</p>`;
+
+    if (object.userData.name) {
+      infoHTML += `<p><strong>Nombre:</strong> ${object.userData.name}</p>`;
+    }
+
+    infoHTML += `<p><strong>Tamaño (Radio):</strong> ${object.userData.size.toFixed(2)} unidades</p>`;
+
+    const distanceToSun = object.position.distanceTo(this.nucleus.position);
+    infoHTML += `<p><strong>Distancia al Sol:</strong> ${distanceToSun.toFixed(2)} unidades</p>`;
+
+    if (object.userData.velocity) {
+      infoHTML += `<p><strong>Velocidad:</strong> ${object.userData.velocity.length().toFixed(4)} unidades/cuadro</p>`;
+    }
+
+    this.infoPanel.innerHTML = infoHTML;
+    this.infoPanel.classList.add('visible'); // Make the panel visible
+  }
+
+  //MARK: -clearObjectInfo
+  clearObjectInfo() {
+    this.infoPanel.innerHTML = '';
+    this.infoPanel.classList.remove('visible'); // Hide the panel
+  }
+
+  //MARK: -createCelestialBody
+  createCelestialBody(position) {
+    const randomType = Math.random();
+    let geometry, material, mesh;
+    let size, textureKey;
+    let velocity = new THREE.Vector3();
+    let rotationSpeed = new THREE.Vector3();
+    let type;
+
+    // Define object properties based on random type
+    if (randomType < 0.3) { // Star (point or glowing sphere)
+      const starType = Math.random();
+      if (starType < 0.7) { // Point Star
+        geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0, 0, 0]), 3));
+        size = THREE.MathUtils.randFloat(0.5, 4);
+        textureKey = Math.random() < 0.5 ? 'flare1' : 'flare2';
+        material = new THREE.PointsMaterial({
+          size: size,
+          map: this.textures[`${textureKey}`],
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          depthWrite: false,
+          color: new THREE.Color(Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, 0.5) // Warm colors
+        });
+        mesh = new THREE.Points(geometry, material);
+      } else { // Glowing Sphere Star
+        size = THREE.MathUtils.randFloat(3, 8);
+        geometry = new THREE.IcosahedronGeometry(size, 2);
+        textureKey = 'star';
+        material = new THREE.MeshBasicMaterial({
+          map: this.textures[`${textureKey}`],
+          color: new THREE.Color(1.0, Math.random() * 0.5 + 0.5, 0.0), // Orange-yellowish
+          transparent: true,
+          opacity: 0.8,
+          blending: THREE.AdditiveBlending
+        });
+        mesh = new THREE.Mesh(geometry, material);
+      }
+      velocity.set(THREE.MathUtils.randFloatSpread(0.25), THREE.MathUtils.randFloatSpread(0.25), THREE.MathUtils.randFloatSpread(0.25)); // Slightly faster stars
+      rotationSpeed.set(Math.random() * 0.005, Math.random() * 0.005, Math.random() * 0.005);
+      type = 'star';
+    } else if (randomType < 0.7) { // Planet
+      size = THREE.MathUtils.randFloat(1, 2.5); // Planets are now smaller (another 50%)
+      geometry = new THREE.SphereGeometry(size, 32, 32);
+      const planetTextures = ['planet1', 'planet2', 'planet3'];
+      textureKey = planetTextures[(Math.random() * planetTextures.length) | 0];
+      material = new THREE.MeshStandardMaterial({
+        map: this.textures[`${textureKey}`],
+        roughness: 0.8,
+        metalness: 0.1
+      });
+      mesh = new THREE.Mesh(geometry, material);
+
+      // Initial tangential velocity for orbital suggestion
+      const vectorFromSun = position.clone().sub(this.nucleus.position).normalize();
+      const crossProductAxis = new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(); // Random axis for cross product
+      velocity.crossVectors(vectorFromSun, crossProductAxis).normalize().multiplyScalar(THREE.MathUtils.randFloat(0.25, 0.45)); // Faster tangential velocity
+
+      // Random rotation on all axes
+      rotationSpeed.set(Math.random() * 0.01, Math.random() * 0.01, Math.random() * 0.01);
+      type = 'planet';
+
+      // Create orbital trail for planets
+      let trailGeometry = new THREE.BufferGeometry();
+      let positions = new Float32Array(this.MAX_TRAIL_POINTS * 3);
+      trailGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      let trailMaterial = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.2 // Subtle trail
+      });
+      let trailLine = new THREE.Line(trailGeometry, trailMaterial);
+      this.scene.add(trailLine);
+      mesh.userData.trail = { line: trailLine, currentPoint: 0, positions: positions };
+
+    } else if (randomType < 0.85) { // Moon (smaller planet-like)
+      size = THREE.MathUtils.randFloat(2, 5);
+      geometry = new THREE.SphereGeometry(size, 16, 16);
+      const moonTextures = ['planet1', 'planet2', 'planet3']; // Reuse planet textures for simplicity
+      textureKey = moonTextures[(Math.random() * moonTextures.length) | 0];
+      material = new THREE.MeshStandardMaterial({
+        map: this.textures[`${textureKey}`],
+        roughness: 0.9,
+        metalness: 0.05,
+        color: new THREE.Color(0.7 + Math.random() * 0.3, 0.7 + Math.random() * 0.3, 0.7 + Math.random() * 0.3) // Grayish tone
+      });
+      mesh = new THREE.Mesh(geometry, material);
+      velocity.set(THREE.MathUtils.randFloatSpread(0.08), THREE.MathUtils.randFloatSpread(0.08), THREE.MathUtils.randFloatSpread(0.08));
+      rotationSpeed.set(Math.random() * 0.008, Math.random() * 0.008, Math.random() * 0.008);
+      type = 'moon';
+    } else { // Asteroid (cluster of particles)
+      const numParticles = THREE.MathUtils.randInt(5, 15);
+      const asteroidPositions = new Float32Array(numParticles * 3);
+      for (let i = 0; i < numParticles; i++) {
+        asteroidPositions[(i * 3) + 0] = THREE.MathUtils.randFloatSpread(5); // Small cluster
+        asteroidPositions[(i * 3) + 1] = THREE.MathUtils.randFloatSpread(5);
+        asteroidPositions[(i * 3) + 2] = THREE.MathUtils.randFloatSpread(5);
+      }
+      geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(asteroidPositions, 3));
+      size = THREE.MathUtils.randFloat(0.3, 1.5);
+      textureKey = 'flare3'; // A rougher particle texture
+      material = new THREE.PointsMaterial({
+        size: size,
+        map: this.textures[`${textureKey}`],
+        blending: THREE.NormalBlending,
+        transparent: true,
+        opacity: 0.7,
+        depthWrite: false,
+        color: new THREE.Color(0.5 + Math.random() * 0.2, 0.4 + Math.random() * 0.2, 0.3 + Math.random() * 0.2) // Rocky brownish
+      });
+      mesh = new THREE.Points(geometry, material);
+      velocity.set(THREE.MathUtils.randFloatSpread(0.1), THREE.MathUtils.randFloatSpread(0.1), THREE.MathUtils.randFloatSpread(0.1)); // Slightly faster asteroids
+      rotationSpeed.set(Math.random() * 0.01, Math.random() * 0.01, Math.random() * 0.01);
+      type = 'asteroid';
+    }
+
+    mesh.position.copy(position);
+    mesh.userData.velocity = velocity; // Store velocity for animation
+    mesh.userData.rotationSpeed = rotationSpeed; // Store rotation speed
+    mesh.userData.type = type; // Store type for specific behavior in update loop
+    mesh.userData.size = size; // Store size for info panel
+
+    this.scene.add(mesh);
+    this.celestialBodies.push(mesh); // Add to our list for updates
+
+    // Add visual feedback (temporary ring)
+    const ringInnerRadius = size * 1.5;
+    const ringOuterRadius = size * 2;
+    const ringGeometry = new THREE.RingGeometry(ringInnerRadius, ringOuterRadius, 32);
+    const ringMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ffff, // Cyan glow
+        transparent: true,
+        opacity: 1,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide
+    });
+    const spawnRing = new THREE.Mesh(ringGeometry, ringMaterial);
+    spawnRing.position.copy(position);
+    spawnRing.rotation.x = -Math.PI / 2; // Orient to be flat on the XY plane for a horizontal ripple
+    this.scene.add(spawnRing);
+    this.tempEffects.push({
+        mesh: spawnRing,
+        startTime: this.clock.getElapsedTime(),
+        duration: 0.8 // Animation duration in seconds
+    });
+  }
+
+  //MARK: -randomPointSphere
+  // Generates random coordinates on a sphere using the provided radius (Unused for interactive, but good utility)
+  randomPointSphere(radius) {
+    const theta = 2 * Math.PI * Math.random();
+    const phi = Math.acos(2 * Math.random() - 1);
+    const dx = 0 + radius * Math.sin(phi) * Math.cos(theta);
+    const dy = 0 + radius * Math.sin(phi) * Math.sin(theta);
+    const dz = 0 + radius * Math.cos(phi);
+
+    return new THREE.Vector3(dx, dy, dz);
+  }
+
+  //MARK: -onResize
+  // Keeps camera and renderer in sync with the window size
+  onResize() {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  //MARK: -limitFPS
+  // Caps the rendering loop to a specified frame interval
+  limitFPS(interval) {
+    this.rafAnimate = requestAnimationFrame(this.limitFPS.bind(this, interval));
+    this.delta += this.clock.getDelta();
+
+    if (this.delta > interval) {
+      this.loop();
+      this.delta = this.delta % interval;
+    }
+  }
+
+  //MARK: -updateNucleus
+  // Expands and displaces the nucleus based on noise
+  updateNucleus() {
+    // Nucleus animation simplified: still deforming the sphere
+    const timeFactor = this.clock.getElapsedTime() * 0.008; // Faster deformation
+    const currentBlobScale = this.blobScale; // Use constant blobScale
+    const positionAttribute = this.nucleus.geometry.attributes.position;
+    const originalPositions = positionAttribute.array.slice(); // Get initial sphere vertex positions
+
+    for (let i = 0; i < positionAttribute.count; i++) {
+        const x = originalPositions[(i * 3) + 0];
+        const y = originalPositions[(i * 3) + 1];
+        const z = originalPositions[(i * 3) + 2];
+
+        const displacement = this.noise(x * 0.5 + timeFactor, y * 0.5 + timeFactor) * currentBlobScale;
+        const normal = new THREE.Vector3(x, y, z).normalize();
+        normal.multiplyScalar(displacement);
+
+        positionAttribute.array[(i * 3) + 0] = x + normal.x;
+        positionAttribute.array[(i * 3) + 1] = y + normal.y;
+        positionAttribute.array[(i * 3) + 2] = z + normal.z;
+    }
+    positionAttribute.needsUpdate = true;
+    this.nucleus.geometry.computeVertexNormals();
+  }
+
+  //MARK: -updateCelestialBodies
+  // Updates position and rotation for dynamically created bodies
+  updateCelestialBodies() {
+    const sunPosition = this.nucleus.position; // Sun's position (0,0,0)
+
+    this.celestialBodies.forEach(body => {
+      // Apply "gravity" for planets
+      if (body.userData.type === 'planet' && this.gravityEnabled) { // Apply gravity only if enabled
+          const directionToSun = sunPosition.clone().sub(body.position).normalize();
+          // Apply a small pull towards the sun
+          body.userData.velocity.add(directionToSun.multiplyScalar(0.0008)); // Tunable "gravity" constant, slightly increased
+
+          // Limit planet velocity to prevent it from accelerating infinitely
+          const maxPlanetSpeed = 0.8; // Increased max speed
+          if (body.userData.velocity.length() > maxPlanetSpeed) {
+              body.userData.velocity.normalize().multiplyScalar(maxPlanetSpeed);
+          }
+
+          // Update orbital trail
+          let trail = body.userData.trail;
+          let positions = trail.positions;
+          let currentPoint = trail.currentPoint;
+
+          // Shift points if trail is full
+          if (currentPoint >= this.MAX_TRAIL_POINTS) {
+              for (let i = 0; i < this.MAX_TRAIL_POINTS - 1; i++) {
+                  positions[i * 3] = positions[(i + 1) * 3];
+                  positions[i * 3 + 1] = positions[(i + 1) * 3 + 1];
+                  positions[i * 3 + 2] = positions[(i + 1) * 3 + 2];
+              }
+              currentPoint = this.MAX_TRAIL_POINTS - 1;
+          }
+
+          // Add current position
+          positions[currentPoint * 3] = body.position.x;
+          positions[currentPoint * 3 + 1] = body.position.y;
+          positions[currentPoint * 3 + 2] = body.position.z;
+
+          trail.currentPoint = (trail.currentPoint + 1);
+          if (trail.currentPoint > this.MAX_TRAIL_POINTS) {
+               trail.currentPoint = this.MAX_TRAIL_POINTS;
+          }
+          trail.line.geometry.setDrawRange(0, trail.currentPoint);
+          trail.line.geometry.attributes.position.needsUpdate = true;
+      } else if (body.userData.type === 'planet' && !this.gravityEnabled) {
+          // If gravity is off, clear the trail for planets so it doesn't look like an orbit
+          if (body.userData.trail) {
+              body.userData.trail.currentPoint = 0;
+              body.userData.trail.line.geometry.setDrawRange(0, 0);
+          }
+      }
+
+      if (body.userData.velocity) {
+        body.position.add(body.userData.velocity);
+      }
+      if (body.userData.rotationSpeed) {
+        body.rotation.x += body.userData.rotationSpeed.x;
+        body.rotation.y += body.userData.rotationSpeed.y;
+        body.rotation.z += body.userData.rotationSpeed.z;
+
+        // Simple "out of bounds" check to prevent objects from flying too far
+        const distance = body.position.distanceTo(sunPosition); // Check distance to sun
+        if (distance > 300 && body.userData.type !== 'star') { // Stars can fly off, but recycle planets/moons/asteroids
+            // Teleport back to a random point near center with a new tangential velocity if it's a planet/moon/asteroid
+            body.position.copy(this.randomPointSphere(50));
+            // Recalculate tangential velocity for recycled objects to maintain "orbit" feel
+            if (body.userData.type === 'planet') {
+                const vectorFromSun = body.position.clone().sub(sunPosition).normalize();
+                const crossProductAxis = new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize();
+                body.userData.velocity.crossVectors(vectorFromSun, crossProductAxis).normalize().multiplyScalar(THREE.MathUtils.randFloat(0.25, 0.45)); // Reset with faster velocity
+                // Reset trail
+                if (body.userData.trail) {
+                    body.userData.trail.currentPoint = 0;
+                    body.userData.trail.line.geometry.setDrawRange(0, 0);
+                }
+            } else { // For moon/asteroid, just give a gentle random push
+                body.userData.velocity.set(THREE.MathUtils.randFloatSpread(0.08), THREE.MathUtils.randFloatSpread(0.08), THREE.MathUtils.randFloatSpread(0.08));
+            }
+        }
+      }
+    });
+  }
+
+  //MARK: -updateTemporaryEffects
+  updateTemporaryEffects() {
+    const currentTime = this.clock.getElapsedTime();
+    for (let i = this.tempEffects.length - 1; i >= 0; i--) {
+        const effect = this.tempEffects[i];
+        const elapsed = currentTime - effect.startTime;
+        const progress = elapsed / effect.duration;
+
+        if (progress >= 1) {
+            this.scene.remove(effect.mesh);
+            if (effect.mesh.geometry) effect.mesh.geometry.dispose();
+            if (effect.mesh.material) effect.mesh.material.dispose();
+            this.tempEffects.splice(i, 1);
+        } else {
+            // Fade out and scale up for a ripple effect
+            effect.mesh.material.opacity = 1 - progress;
+            const scale = 1 + progress * 0.5; // Scale up to 1.5 times initial size
+            effect.mesh.scale.set(scale, scale, scale);
+        }
+    }
+  }
+
+  //MARK: -updateRotations
+  // Subtle rotation updates for backgrounds
+  updateRotations() {
+    this.sphereBg.rotation.y += 0.0005; // Slower rotation
+  }
+
+  //MARK: -loop
+  // Core animation loop called at each frame or limited interval
+  loop() {
+    this.updateNucleus();
+    this.updateCelestialBodies(); // Update new celestial bodies
+    this.updateTemporaryEffects(); // Update temporary visual effects
+    this.updateRotations();
+
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  bannerInit() {
+    const banner = document.querySelector(".banner");
+    const controls = this.controls;
+
+    // Function to hide banner
+    const hideBanner = () => {
+      if (!this.hasInteracted && banner) {
+        banner.style.opacity = "0";
+        banner.style.transition = "opacity 0.5s ease";
+        // Remove banner from DOM after fade out
+        setTimeout(() => {
+          banner.remove();
+        }, 500);
+        this.hasInteracted = true;
+      }
+    };
+
+    // Listen for scroll/zoom
+    window.addEventListener("wheel", hideBanner, { once: true });
+
+    // Listen for drag start
+    this.renderer.domElement.addEventListener("pointerdown", hideBanner, {
+      once: true });
+
+  }}
+
+
+const effect = new Effect();
+effect.init();
+//# sourceURL=pen.js
+    </script>
+
+
+</body>
+
 </html>
