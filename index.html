@@ -820,8 +820,8 @@
         const orbits = [];
         let labelsVisible = true;
         let orbitsVisible = true;
-        let educationPanelVisible = true;
-        let controlsPanelVisible = true;
+        let educationPanelVisible = false;
+        let controlsPanelVisible = false;
         let selectedBody = null;
         let cameraMode = 'free'; // 'free' o 'follow'
         // let followDistance = 50; // No longer needed with OrbitControls
@@ -1285,8 +1285,6 @@
             parentPlanet: planets.saturn,
             orbitSpeed: 0.008,
             rotationSpeed: 0.008,
-            hasAtmosphere: true,
-            atmosphereColor: 0xFFA07A
         });
 
         planets.enceladus = createMoon({
@@ -1319,6 +1317,34 @@
             rotationSpeed: 0.01
         });
 
+        planets.iapetus = createMoon({
+            name: 'iapetus',
+            radius: planetScales.iapetus,
+            distance: 30, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_iapetus.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.001,
+            rotationSpeed: 0.001
+        });
+        planets.dione = createMoon({
+            name: 'dione',
+            radius: planetScales.dione,
+            distance: 9, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_dione.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.009,
+            rotationSpeed: 0.009
+        });
+        planets.tethys = createMoon({
+            name: 'tethys',
+            radius: planetScales.tethys,
+            distance: 7, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_tethys.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.011,
+            rotationSpeed: 0.011
+        });
+
         planets.uranus = createPlanet({
             name: 'uranus',
             radius: planetScales.uranus,
@@ -1331,6 +1357,53 @@
             atmosphereColor: 0x99ccff
         });
 
+        // Lunas de Urano
+        planets.miranda = createMoon({
+            name: 'miranda',
+            radius: planetScales.miranda,
+            distance: 7, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_miranda.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.01,
+            rotationSpeed: 0.01
+        });
+        planets.ariel = createMoon({
+            name: 'ariel',
+            radius: planetScales.ariel,
+            distance: 9, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_ariel.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.008,
+            rotationSpeed: 0.008
+        });
+        planets.umbriel = createMoon({
+            name: 'umbriel',
+            radius: planetScales.umbriel,
+            distance: 12, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_umbriel.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.006,
+            rotationSpeed: 0.006
+        });
+        planets.titania = createMoon({
+            name: 'titania',
+            radius: planetScales.titania,
+            distance: 18, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_titania.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.004,
+            rotationSpeed: 0.004
+        });
+        planets.oberon = createMoon({
+            name: 'oberon',
+            radius: planetScales.oberon,
+            distance: 25, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_oberon.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.003,
+            rotationSpeed: 0.003
+        });
+
         planets.neptune = createPlanet({
             name: 'neptune',
             radius: planetScales.neptune,
@@ -1341,6 +1414,28 @@
             tilt: 28.32 * Math.PI / 180,
             hasAtmosphere: true,
             atmosphereColor: 0x3366ff
+        });
+
+        // Lunas de Neptuno
+        planets.triton = createMoon({
+            name: 'triton',
+            radius: planetScales.triton,
+            distance: 10, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_triton.jpg',
+            parentPlanet: planets.neptune,
+            orbitSpeed: 0.008,
+            rotationSpeed: 0.008,
+            retrograde: true,
+            tilt: 157.35 * Math.PI / 180 // Inclinación axial de Tritón
+        });
+        planets.nereid = createMoon({
+            name: 'nereid',
+            radius: planetScales.nereid,
+            distance: 30, // distancia escalada, Nereida tiene una órbita muy excéntrica
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_nereid.jpg', // Placeholder, use a generic moon texture if specific not available
+            parentPlanet: planets.neptune,
+            orbitSpeed: 0.0005, // Menor velocidad por su órbita lejana
+            rotationSpeed: 0.005
         });
 
         // Sistema de selección de planetas
