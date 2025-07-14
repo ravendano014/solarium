@@ -98,6 +98,16 @@
             background-color: #4fc3f7;
             color: #000;
         }
+        #controlsPanel .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
         #speedSlider {
             width: 100%;
             margin: 10px 0;
@@ -151,6 +161,16 @@
             margin-top: 0;
             color: #4fc3f7;
         }
+        #educationPanel  .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
         .tab-buttons {
             display: flex;
             margin-bottom: 10px;
@@ -186,6 +206,16 @@
             border: 1px solid #444;
             display: block;
         }
+        #helpPanel  .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
         #cameraStatus {
             position: absolute;
             top: 70px;
@@ -209,6 +239,7 @@
         <div id="planetContent"></div>
     </div>
     <div id="controlsPanel">
+        <button class="close-btn">×</button>
         <h3>Controls</h3>
         <div>
             <button id="pauseBtn">Pause</button>
@@ -227,6 +258,7 @@
         </div>
     </div>
     <div id="educationPanel">
+        <button class="close-btn">×</button>
         <h3>Educational Mode</h3>
         <div class="tab-buttons">
             <button class="tab-btn active" data-tab="comparisons">Comparisons</button>
@@ -254,6 +286,7 @@
         </div>
     </div>
     <div id="helpPanel">
+        <button class="close-btn">×</button>
         <h3>Keyboard Controls</h3>
         <ul style="padding-left: 20px;">
             <li><strong>M</strong>: Show/hide education panel</li>
@@ -1794,6 +1827,18 @@
         document.querySelector('#infoPanel .close-btn').addEventListener('click', function() {
             document.getElementById('infoPanel').style.display = 'none';
         });
+        // Close controls panel
+        document.querySelector('#controlsPanel .close-btn').addEventListener('click', function() {
+            document.getElementById('controlsPanel').style.display = 'none';
+        }); 
+        // Close education panel
+        document.querySelector('#educationPanel .close-btn').addEventListener('click', function() {
+            document.getElementById('educationPanel').style.display = 'none';
+        });
+        // Close help panel
+        document.querySelector('#helpPanel .close-btn').addEventListener('click', function() {
+            document.getElementById('helpPanel').style.display = 'none';
+        }); 
 
         // Simulation controls
         let simulationSpeed = 1;
