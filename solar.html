@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Solar Interactivo Educativo</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            pointer-events: none;
+            text-shadow: 1px 1px 4px black;
+            font-size: 1.4em;
+            z-index: 10;
+        }
+        .planet-label {
+            color: white;
+            font-size: 18px;
+            text-shadow: 2px 2px 5px black;
+            pointer-events: none;
+            white-space: nowrap;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        #infoPanel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 320px;
+            display: none;
+            z-index: 100;
+            border: 1px solid #444;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        #infoPanel h3 {
+            margin-top: 0;
+            color: #4fc3f7;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+        }
+        #infoPanel .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #controlsPanel {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 100;
+            border: 1px solid #444;
+            display: none;
+        }
+        #controlsPanel h3 {
+            margin-top: 0;
+            color: #4fc3f7;
+        }
+        #controlsPanel button {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 6px 12px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #controlsPanel button:hover {
+            background-color: #444;
+        }
+        #controlsPanel button.active {
+            background-color: #4fc3f7;
+            color: #000;
+        }
+        #speedSlider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .comparison-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .comparison-item {
+            text-align: center;
+            flex: 1;
+        }
+        .comparison-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #ff6d00, #ffab00);
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .fact-box {
+            background-color: rgba(25, 118, 210, 0.2);
+            border-left: 4px solid #1976d2;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        #timeDisplay {
+            position: absolute;
+            top: 40px;
+            left: 20px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            z-index: 100;
+        }
+        #educationPanel {
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            background-color: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 320px;
+            z-index: 100;
+            border: 1px solid #444;
+            display: none;
+        }
+        #educationPanel h3 {
+            margin-top: 0;
+            color: #4fc3f7;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            background-color: #333;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background-color: #4fc3f7;
+            color: black;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #helpPanel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 300px;
+            z-index: 100;
+            border: 1px solid #444;
+            display: block;
+        }
+        #cameraStatus {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            z-index: 100;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">Sistema Solar • Usa el ratón para rotar, rueda para zoom • Haz clic para información • Esc dejar de seguir selección</div>
+    <div id="timeDisplay">Tiempo simulado: 0 días</div>
+    <div id="cameraStatus">Modo: Libre • Selección: Ninguna</div>
+    <div id="infoPanel">
+        <button class="close-btn">×</button>
+        <h3 id="planetName">Planeta</h3>
+        <div id="planetContent"></div>
+    </div>
+    <div id="controlsPanel">
+        <h3>Controles</h3>
+        <div>
+            <button id="pauseBtn">Pausa</button>
+            <button id="slowBtn">Lento</button>
+            <button id="normalBtn" class="active">Normal</button>
+            <button id="fastBtn">Rápido</button>
+        </div>
+        <div>
+            <label>Velocidad: <span id="speedValue">1</span>x</label>
+            <input type="range" id="speedSlider" min="0" max="20" step="0.1" value="1">
+        </div>
+        <div style="margin-top: 15px;">
+            <button id="toggleOrbits">Mostrar órbitas</button>
+            <button id="toggleLabels">Mostrar nombres</button>
+            <button id="toggleFollow">Modo Seguir (F)</button>
+        </div>
+    </div>
+    <div id="educationPanel">
+        <h3>Modo Educativo</h3>
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="comparisons">Comparaciones</button>
+            <button class="tab-btn" data-tab="facts">Datos curiosos</button>
+            <button class="tab-btn" data-tab="missions">Misiones</button>
+        </div>
+        <div class="tab-content active" id="comparisons">
+            <p>Selecciona un planeta para ver comparaciones con la Tierra</p>
+        </div>
+        <div class="tab-content" id="facts">
+            <div class="fact-box">
+                <strong>El Sol contiene el 99.86%</strong> de la masa de todo el Sistema Solar.
+            </div>
+            <div class="fact-box">
+                <strong>Un día en Venus</strong> es más largo que un año en Venus (243 días terrestres vs 225 días terrestres).
+            </div>
+        </div>
+        <div class="tab-content" id="missions">
+            <p><strong>Misiones recientes:</strong></p>
+            <ul style="padding-left: 20px;">
+                <li>Perseverance (Marte, 2021)</li>
+                <li>Parker Solar Probe (Sol, 2018)</li>
+                <li>Europa Clipper (Júpiter, prevista 2024)</li>
+            </ul>
+        </div>
+    </div>
+    <div id="helpPanel">
+        <h3>Controles de Teclado</h3>
+        <ul style="padding-left: 20px;">
+            <li><strong>M</strong>: Mostrar/ocultar panel educativo</li>
+            <li><strong>N</strong>: Mostrar/ocultar nombres</li>
+            <li><strong>O</strong>: Mostrar/ocultar órbitas</li>
+            <li><strong>C</strong>: Mostrar/ocultar controles</li>
+            <li><strong>H</strong>: Mostrar/ocultar esta ayuda</li>
+            <li><strong>Clic en planeta/luna</strong>: Seleccionar para seguimiento</li>
+            <li><strong>F</strong>: Alternar modo de cámara libre/seguimiento</li>
+            <li><strong>Rueda del ratón</strong>: Acercar/alejar en modo seguimiento</li>
+            <li><strong>ESC</strong>: Salir del modo seguimiento</li>
+        </ul>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+    <script>
+        // Escena y configuración inicial
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.z = 250;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        const labelRenderer = new THREE.CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+
+        // Controles de cámara
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 20;
+        controls.maxDistance = 1000;
+        controls.screenSpacePanning = true;
+
+        // Cargador de texturas
+        const textureLoader = new THREE.TextureLoader();
+        function loadTexture(path) {
+            const texture = textureLoader.load(path);
+            texture.encoding = THREE.sRGBEncoding;
+            return texture;
+        }
+
+        // Campo de estrellas mejorado
+        function createStarfield() {
+            const starCount = 10000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = [];
+            const colors = [];
+            const sizes = [];
+            const color = new THREE.Color();
+
+            for (let i = 0; i < starCount; i++) {
+                const distance = THREE.MathUtils.randFloat(1000, 2000);
+                const theta = THREE.MathUtils.randFloat(0, Math.PI * 2);
+                const phi = Math.acos(THREE.MathUtils.randFloat(-1, 1));
+
+                positions.push(
+                    distance * Math.sin(phi) * Math.cos(theta),
+                    distance * Math.sin(phi) * Math.sin(theta),
+                    distance * Math.cos(phi)
+                );
+
+                const hue = 0.5 + Math.random() * 0.5;
+                const saturation = 0.2 + Math.random() * 0.8;
+                const lightness = 0.5 + Math.random() * 0.5;
+                color.setHSL(hue, saturation, lightness);
+                colors.push(color.r, color.g, color.b);
+                sizes.push(0.2 + Math.random() * 1.5);
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+
+            const material = new THREE.PointsMaterial({
+                size: 1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.9,
+                sizeAttenuation: true,
+                alphaTest: 0.01
+            });
+
+            return new THREE.Points(geometry, material);
+        }
+        scene.add(createStarfield());
+
+        // Sol con corona reducida
+        const sunGeometry = new THREE.SphereGeometry(15, 64, 64);
+        const sunTexture = loadTexture('https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_sun.jpg');
+        const sunEmissionMap = loadTexture('https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_sun_emission.jpg');
+        
+        const sunMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                sunTexture: { type: 't', value: sunTexture },
+                emissionMap: { type: 't', value: sunEmissionMap },
+                time: { type: 'f', value: 0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                
+                void main() {
+                    vUv = uv;
+                    vNormal = normalize(normalMatrix * normal);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D sunTexture;
+                uniform sampler2D emissionMap;
+                uniform float time;
+                
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                
+                void main() {
+                    vec4 texColor = texture2D(sunTexture, vUv);
+                    vec4 emissionColor = texture2D(emissionMap, vUv);
+                    
+                    // Efecto de llamaradas solares más sutil
+                    float flare = 0.9 + sin(time * 0.3) * 0.1;
+                    
+                    // Color final más natural
+                    vec3 finalColor = texColor.rgb * flare + emissionColor.rgb * 0.3;
+                    
+                    gl_FragColor = vec4(finalColor, 1.0);
+                }
+            `,
+            side: THREE.FrontSide
+        });
+        
+        const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+        scene.add(sunMesh);
+
+        // Etiqueta del Sol
+        const sunLabel = createLabel("Sol");
+        sunMesh.add(sunLabel);
+        sunMesh.userData.label = sunLabel; // Store reference to the label
+
+        // Resplandor solar reducido
+        const sunGlowGeometry = new THREE.SphereGeometry(15, 32, 32);
+        const sunGlowMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                glowColor: { type: 'c', value: new THREE.Color(0xffaa33) },
+                viewVector: { type: 'v3', value: camera.position }
+            },
+            vertexShader: `
+                uniform vec3 viewVector;
+                varying float intensity;
+                
+                void main() {
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    vec3 actual_normal = normalize(normalMatrix * normal);
+                    intensity = pow(0.5 - dot(actual_normal, normalize(viewVector)), 1.5);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 glowColor;
+                varying float intensity;
+                
+                void main() {
+                    vec3 glow = glowColor * intensity;
+                    gl_FragColor = vec4(glow, intensity * 0.2);
+                }
+            `,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+        });
+        
+        const sunGlow = new THREE.Mesh(sunGlowGeometry, sunGlowMaterial);
+        sunGlow.scale.set(1.05, 1.05, 1.05);
+        scene.add(sunGlow);
+
+        // Luz solar
+        const sunLight = new THREE.PointLight(0xffdd99, 4, 1000, 2);
+        sunLight.position.set(0, 0, 0);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 1;
+        sunLight.shadow.camera.far = 1000;
+        scene.add(sunLight);
+
+        // Luz ambiental
+        const ambientLight = new THREE.AmbientLight(0x333333);
+        scene.add(ambientLight);
+
+        // Escalas y distancias (valores reales escalados)
+        const planetScales = {
+            mercury: 0.38,
+            venus: 0.95,
+            earth: 1,
+            mars: 0.53,
+            jupiter: 11.2,
+            saturn: 9.45,
+            uranus: 4.01,
+            neptune: 3.88,
+            moon: 0.27,
+            io: 0.29 * 3,
+            europa: 0.25 * 3,
+            ganymede: 0.41 * 3,
+            callisto: 0.38 * 3,
+            phobos: 0.08,
+            deimos: 0.06,
+            titan: 0.40 * 3,
+            enceladus: 0.12 * 3,
+            mimas: 0.08 * 3,
+            rhea: 0.20 * 3
+        };
+
+        // Distancias proporcionales (1 unidad = 10 millones de km)
+        const planetDistances = {
+            mercury: 5.8 * 3.5,
+            venus: 10.8 * 3.5,
+            earth: 15.0 * 3.5,
+            mars: 22.8 * 3.5,
+            jupiter: 77.8 * 3,
+            saturn: 143.4 * 3,
+            uranus: 287.1 * 3,
+            neptune: 449.5 * 3
+        };
+
+        // Información educativa extendida con nuevas lunas
+        const planetInfo = {
+            mercury: {
+                name: "Mercurio",
+                type: "Planeta terrestre",
+                diameter: "4,880 km",
+                distance: "57.9 millones km",
+                orbitalPeriod: "88 días terrestres",
+                rotationPeriod: "58.6 días terrestres",
+                temperature: "-173°C a 427°C",
+                moons: 0,
+                facts: [
+                    "Es el planeta más pequeño del sistema solar",
+                    "No tiene atmósfera significativa",
+                    "Tiene la mayor variación de temperatura entre día y noche"
+                ],
+                missions: ["Mariner 10 (1974-75)", "MESSENGER (2008-2015)", "BepiColombo (2018-presente)"],
+                composition: "70% metálico, 30% silicatos",
+                discovery: "Conocido desde la antigüedad",
+                orbitColor: 0xFFA500
+            },
+            venus: {
+                name: "Venus",
+                type: "Planeta terrestre",
+                diameter: "12,104 km",
+                distance: "108.2 millones km",
+                orbitalPeriod: "225 días terrestres",
+                rotationPeriod: "243 días terrestres (retrógrado)",
+                temperature: "462°C (media)",
+                moons: 0,
+                facts: [
+                    "Gira en dirección opuesta a la mayoría de planetas",
+                    "Tiene un efecto invernadero descontrolado",
+                    "La presión en su superficie es 92 veces la de la Tierra"
+                ],
+                missions: ["Venera (URSS, 1961-1983)", "Magallanes (NASA, 1989-1994)", "Akatsuki (JAXA, 2010-presente)"],
+                composition: "CO₂ (96.5%), N₂ (3.5%)",
+                discovery: "Conocido desde la antigüedad",
+                orbitColor: 0x996633
+            },
+            earth: {
+                name: "Tierra",
+                type: "Planeta terrestre",
+                diameter: "12,742 km",
+                distance: "149.6 millones km",
+                orbitalPeriod: "365.25 días",
+                rotationPeriod: "23h 56m 4s",
+                temperature: "-89°C a 58°C",
+                moons: 1,
+                facts: [
+                    "El único planeta conocido con vida",
+                    "71% de su superficie está cubierta de agua",
+                    "Tiene un campo magnético protector"
+                ],
+                missions: ["Todos los vuelos espaciales humanos"],
+                composition: "N₂ (78%), O₂ (21%), Ar (1%)",
+                discovery: "Nuestro hogar",
+                orbitColor: 0x00FF00
+            },
+            mars: {
+                name: "Marte",
+                type: "Planeta terrestre",
+                diameter: "6,779 km",
+                distance: "227.9 millones km",
+                orbitalPeriod: "687 días terrestres",
+                rotationPeriod: "24h 37m 22s",
+                temperature: "-140°C a 20°C",
+                moons: 2,
+                facts: [
+                    "Tiene el volcán más grande del sistema solar (Olympus Mons)",
+                    "Presenta estaciones como la Tierra",
+                    "Tuvo agua líquida en su superficie en el pasado"
+                ],
+                missions: ["Viking (1975)", "Opportunity (2003-2018)", "Perseverance (2020-presente)"],
+                composition: "CO₂ (95%), N₂ (3%), Ar (1.6%)",
+                discovery: "Conocido desde la antigüedad",
+                orbitColor: 0xFF0000
+            },
+            jupiter: {
+                name: "Júpiter",
+                type: "Gigante gaseoso",
+                diameter: "139,820 km",
+                distance: "778.5 millones km",
+                orbitalPeriod: "11.86 años terrestres",
+                rotationPeriod: "9h 55m 30s",
+                temperature: "-108°C (nubes)",
+                moons: 79,
+                facts: [
+                    "El planeta más grande del sistema solar",
+                    "Tiene una tormenta gigante (Gran Mancha Roja) que dura siglos",
+                    "Su campo magnético es 14 veces más fuerte que el de la Tierra"
+                ],
+                missions: ["Pioneer 10/11", "Voyager 1/2", "Galileo (1995-2003)", "Juno (2016-presente)"],
+                composition: "H₂ (90%), He (10%)",
+                discovery: "Conocido desde la antigüedad",
+                orbitColor: 0xDDA0DD
+            },
+            saturn: {
+                name: "Saturno",
+                type: "Gigante gaseoso",
+                diameter: "116,460 km",
+                distance: "1,434 millones km",
+                orbitalPeriod: "29.46 años terrestres",
+                rotationPeriod: "10h 33m 38s",
+                temperature: "-139°C (nubes)",
+                moons: 82,
+                facts: [
+                    "Tiene el sistema de anillos más visible",
+                    "Es el único planeta menos denso que el agua",
+                    "Tiene una luna (Titán) con una atmósfera densa y lagos de hidrocarburos"
+                ],
+                missions: ["Pioneer 11", "Voyager 1/2", "Cassini-Huygens (1997-2017)"],
+                composition: "H₂ (96%), He (3%)",
+                discovery: "Conocido desde la antigüedad",
+                orbitColor: 0xFFFF00
+            },
+            uranus: {
+                name: "Urano",
+                type: "Gigante de hielo",
+                diameter: "50,724 km",
+                distance: "2,871 millones km",
+                orbitalPeriod: "84.01 años terrestres",
+                rotationPeriod: "17h 14m 24s (retrógrado)",
+                temperature: "-197°C (nubes)",
+                moons: 27,
+                facts: [
+                    "Gira sobre su lado con un ángulo de 98°",
+                    "Fue el primer planeta descubierto con telescopio",
+                    "Tiene anillos verticales muy tenues"
+                ],
+                missions: ["Voyager 2 (1986)"],
+                composition: "H₂ (83%), He (15%), CH₄ (2%)",
+                discovery: "William Herschel en 1781",
+                orbitColor: 0x00FFFF
+            },
+            neptune: {
+                name: "Neptuno",
+                type: "Gigante de hielo",
+                diameter: "49,244 km",
+                distance: "4,495 millones km",
+                orbitalPeriod: "164.8 años terrestres",
+                rotationPeriod: "16h 6m 36s",
+                temperature: "-201°C (nubes)",
+                moons: 14,
+                facts: [
+                    "Tiene los vientos más fuertes del sistema solar (2,100 km/h)",
+                    "Fue descubierto mediante predicciones matemáticas",
+                    "Su luna Tritón orbita en dirección opuesta (retrógrada)"
+                ],
+                missions: ["Voyager 2 (1989)"],
+                composition: "H₂ (80%), He (19%), CH₄ (1%)",
+                discovery: "Johann Galle en 1846",
+                orbitColor: 0x0000FF
+            },
+            moon: {
+                name: "Luna",
+                type: "Satélite natural",
+                diameter: "3,474 km",
+                distance: "384,400 km de la Tierra",
+                orbitalPeriod: "27.3 días",
+                rotationPeriod: "27.3 días (rotación sincrónica)",
+                temperature: "-233°C a 123°C",
+                facts: [
+                    "Es el quinto satélite más grande del sistema solar",
+                    "Influye en las mareas terrestres",
+                    "Las huellas humanas permanecerán millones de años por falta de atmósfera"
+                ],
+                missions: ["Programa Apollo (1969-1972)", "LRO (2009-presente)"],
+                composition: "Silicatos, minerales similares a la Tierra",
+                discovery: "Conocida desde la prehistoria",
+                orbitColor: 0xAAAAAA
+            },
+            phobos: { 
+                name: "Fobos", 
+                type: "Satélite natural",
+                diameter: "22.2 km",
+                distance: "9,377 km de Marte",
+                orbitalPeriod: "7.66 horas",
+                facts: [
+                    "Es la luna más cercana a su planeta en el sistema solar",
+                    "Se acerca a Marte 1.8 cm cada año",
+                    "Tiene un gran cráter llamado Stickney"
+                ],
+                missions: ["Viking 1 (1977)", "Mars Express (2004-presente)"],
+                composition: "Roca rica en carbono",
+                discovery: "Asaph Hall en 1877",
+                orbitColor: 0xCC6666
+            },
+            deimos: { 
+                name: "Deimos", 
+                type: "Satélite natural",
+                diameter: "12.4 km",
+                distance: "23,460 km de Marte",
+                orbitalPeriod: "30.35 horas",
+                facts: [
+                    "Es la luna más pequeña conocida del sistema solar",
+                    "Tiene una forma muy irregular",
+                    "Su superficie es más lisa que la de Fobos"
+                ],
+                missions: ["Viking 2 (1977)", "Mars Express (2004-presente)"],
+                composition: "Roca rica en carbono",
+                discovery: "Asaph Hall en 1877",
+                orbitColor: 0xCC9999
+            },
+            io: { 
+                name: "Io", 
+                type: "Satélite natural",
+                diameter: "3,643 km",
+                distance: "421,700 km de Júpiter",
+                orbitalPeriod: "1.77 días",
+                facts: [
+                    "El cuerpo más volcánicamente activo del sistema solar",
+                    "Tiene más de 400 volcanes activos",
+                    "Su superficie está cubierta de azufre"
+                ],
+                missions: ["Voyager 1 (1979)", "Galileo (1995-2003)"],
+                orbitColor: 0xFF4500 
+            },
+            europa: { 
+                name: "Europa", 
+                type: "Satélite natural",
+                diameter: "3,122 km",
+                distance: "671,100 km de Júpiter",
+                orbitalPeriod: "3.55 días",
+                facts: [
+                    "Tiene un océano subsuperficial de agua líquida",
+                    "Su superficie es de hielo muy liso",
+                    "Es uno de los principales candidatos para albergar vida extraterrestre"
+                ],
+                missions: ["Voyager 2 (1979)", "Galileo (1995-2003)", "Europa Clipper (prevista 2024)"],
+                orbitColor: 0x87CEEB 
+            },
+            ganymede: { 
+                name: "Ganímedes", 
+                type: "Satélite natural",
+                diameter: "5,262 km",
+                distance: "1,070,400 km de Júpiter",
+                orbitalPeriod: "7.15 días",
+                facts: [
+                    "Es la luna más grande del sistema solar",
+                    "Tiene su propio campo magnético",
+                    "Contiene más agua que todos los océanos de la Tierra juntos"
+                ],
+                missions: ["Voyager 1 (1979)", "Galileo (1995-2003)"],
+                orbitColor: 0xDAA520 
+            },
+            callisto: { 
+                name: "Calisto", 
+                type: "Satélite natural",
+                diameter: "4,821 km",
+                distance: "1,882,700 km de Júpiter",
+                orbitalPeriod: "16.69 días",
+                facts: [
+                    "Es la luna más craterizada del sistema solar",
+                    "Tiene una superficie muy antigua (4 mil millones de años)",
+                    "Posiblemente tiene un océano subterráneo"
+                ],
+                missions: ["Voyager 1 (1979)", "Galileo (1995-2003)"],
+                orbitColor: 0x696969 
+            },
+            titan: {
+                name: "Titán",
+                type: "Satélite natural",
+                diameter: "5,150 km",
+                distance: "1,221,850 km de Saturno",
+                orbitalPeriod: "15.95 días",
+                facts: [
+                    "La única luna con una atmósfera densa",
+                    "Tiene lagos y ríos de metano líquido",
+                    "Es más grande que el planeta Mercurio"
+                ],
+                missions: ["Voyager 1 (1980)", "Cassini-Huygens (2004-2017)"],
+                composition: "N₂ (98.4%), CH₄ (1.6%)",
+                discovery: "Christiaan Huygens en 1655",
+                orbitColor: 0xFFA07A
+            },
+            enceladus: {
+                name: "Encélado",
+                type: "Satélite natural",
+                diameter: "504 km",
+                distance: "238,040 km de Saturno",
+                orbitalPeriod: "1.37 días",
+                facts: [
+                    "Tiene géiseres que expulsan agua al espacio",
+                    "Tiene un océano global bajo su corteza helada",
+                    "Es uno de los objetos más reflectantes del sistema solar"
+                ],
+                missions: ["Voyager 2 (1981)", "Cassini (2005-2017)"],
+                composition: "Hielo de agua con núcleo rocoso",
+                discovery: "William Herschel en 1789",
+                orbitColor: 0xADD8E6
+            },
+            mimas: {
+                name: "Mimas",
+                type: "Satélite natural",
+                diameter: "396 km",
+                distance: "185,540 km de Saturno",
+                orbitalPeriod: "0.94 días",
+                facts: [
+                    "Tiene un cráter gigante que lo hace parecer la Estrella de la Muerte",
+                    "Es el objeto más pequeño conocido que tiene forma esférica por su propia gravedad",
+                    "Su superficie está cubierta de cráteres"
+                ],
+                missions: ["Voyager 1 (1980)", "Cassini (2004-2017)"],
+                composition: "Principalmente hielo de agua",
+                discovery: "William Herschel en 1789",
+                orbitColor: 0xD3D3D3
+            },
+            rhea: {
+                name: "Rea",
+                type: "Satélite natural",
+                diameter: "1,528 km",
+                distance: "527,070 km de Saturno",
+                orbitalPeriod: "4.52 días",
+                facts: [
+                    "Es la segunda luna más grande de Saturno",
+                    "Tiene un sistema de tenues anillos (no confirmado)",
+                    "Su superficie está muy craterizada"
+                ],
+                missions: ["Voyager 1 (1980)", "Cassini (2004-2017)"],
+                composition: "Hielo de agua con algo de roca",
+                discovery: "Giovanni Cassini en 1672",
+                orbitColor: 0x778899
+            },
+            // Nuevas lunas de Saturno
+            iapetus: {
+                name: "Jápeto",
+                type: "Satélite natural",
+                diameter: "1,469 km",
+                distance: "3,560,820 km de Saturno",
+                orbitalPeriod: "79.32 días",
+                facts: [
+                    "Tiene dos hemisferios con colores muy diferentes: uno oscuro y uno brillante.",
+                    "Posee una cresta ecuatorial única que le da una apariencia de 'nuez'."
+                ],
+                missions: ["Voyager 1/2", "Cassini-Huygens"],
+                discovery: "Giovanni Domenico Cassini en 1671",
+                orbitColor: 0x9999AA
+            },
+            dione: {
+                name: "Dione",
+                type: "Satélite natural",
+                diameter: "1,123 km",
+                distance: "377,400 km de Saturno",
+                orbitalPeriod: "2.74 días",
+                facts: [
+                    "Muestra un terreno con muchas fracturas y acantilados de hielo.",
+                    "Posiblemente tiene un océano subsuperficial."
+                ],
+                missions: ["Voyager 1/2", "Cassini-Huygens"],
+                discovery: "Giovanni Domenico Cassini en 1684",
+                orbitColor: 0xDDDDDD
+            },
+            tethys: {
+                name: "Tetis",
+                type: "Satélite natural",
+                diameter: "1,062 km",
+                distance: "294,660 km de Saturno",
+                orbitalPeriod: "1.88 días",
+                facts: [
+                    "Tiene un cráter de impacto enorme llamado Odiseo, que cubre gran parte de su superficie.",
+                    "Presenta una gran falla que se extiende por casi las tres cuartas partes de su circunferencia."
+                ],
+                missions: ["Voyager 1/2", "Cassini-Huygens"],
+                discovery: "Giovanni Domenico Cassini en 1684",
+                orbitColor: 0xBBBBBB
+            },
+            // Lunas de Urano
+            miranda: {
+                name: "Miranda",
+                type: "Satélite natural",
+                diameter: "471 km",
+                distance: "129,390 km de Urano",
+                orbitalPeriod: "1.41 días",
+                facts: [
+                    "Tiene un terreno geológicamente variado con cañones y 'coronas' únicas.",
+                    "Se cree que su superficie fue remodelada por fuerzas de marea."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "Gerard Kuiper en 1948",
+                orbitColor: 0xAAAAAA
+            },
+            ariel: {
+                name: "Ariel",
+                type: "Satélite natural",
+                diameter: "1,158 km",
+                distance: "191,000 km de Urano",
+                orbitalPeriod: "2.52 días",
+                facts: [
+                    "Su superficie está marcada por un sistema de valles y cañones, lo que sugiere actividad geológica pasada.",
+                    "Es la segunda luna más brillante de Urano."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "William Lassell en 1851",
+                orbitColor: 0xC0C0C0
+            },
+            umbriel: {
+                name: "Umbriel",
+                type: "Satélite natural",
+                diameter: "1,169 km",
+                distance: "266,000 km de Urano",
+                orbitalPeriod: "4.14 días",
+                facts: [
+                    "Es una de las lunas más oscuras de Urano, con una superficie muy craterizada.",
+                    "Tiene una extraña característica brillante cerca de su ecuador, cuyo origen es desconocido."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "William Lassell en 1851",
+                orbitColor: 0x888888
+            },
+            titania: {
+                name: "Titania",
+                type: "Satélite natural",
+                diameter: "1,578 km",
+                distance: "436,300 km de Urano",
+                orbitalPeriod: "8.71 días",
+                facts: [
+                    "Es la luna más grande de Urano y la octava más grande del sistema solar.",
+                    "Muestra evidencias de actividad geológica en el pasado, como fallas y cañones."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "William Herschel en 1787",
+                orbitColor: 0xDDDDDD
+            },
+            oberon: {
+                name: "Oberón",
+                type: "Satélite natural",
+                diameter: "1,523 km",
+                distance: "583,500 km de Urano",
+                orbitalPeriod: "13.46 días",
+                facts: [
+                    "Es la segunda luna más grande de Urano y está muy craterizada.",
+                    "Tiene una gran montaña en su superficie que se eleva unos 6 km."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "William Herschel en 1787",
+                orbitColor: 0xAAAAAA
+            },
+            // Lunas de Neptuno
+            triton: {
+                name: "Tritón",
+                type: "Satélite natural",
+                diameter: "2,706 km",
+                distance: "354,760 km de Neptuno",
+                orbitalPeriod: "5.88 días",
+                rotationPeriod: "5.88 días (sincrónica)",
+                retrograde: true,
+                facts: [
+                    "Es la luna más grande de Neptuno y la única luna grande del sistema solar con una órbita retrógrada.",
+                    "Tiene criovulcanismo activo, expulsando nitrógeno líquido y polvo.",
+                    "Su superficie está cubierta de hielo de nitrógeno y metano."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "William Lassell en 1846",
+                orbitColor: 0xCCEEFF
+            },
+            nereid: {
+                name: "Nereida",
+                type: "Satélite natural",
+                diameter: "340 km",
+                distance: "5,513,400 km de Neptuno",
+                orbitalPeriod: "360.13 días",
+                facts: [
+                    "Tiene la órbita más excéntrica de cualquier luna conocida en el sistema solar.",
+                    "Su distancia a Neptuno varía enormemente, de 1.4 a 9.7 millones de km."
+                ],
+                missions: ["Voyager 2"],
+                discovery: "Gerard Kuiper en 1949",
+                orbitColor: 0x9999BB
+            }
+        };
+
+        // Variables globales
+        const planets = {};
+        const orbits = [];
+        let labelsVisible = true;
+        let orbitsVisible = true;
+        let educationPanelVisible = false;
+        let controlsPanelVisible = false;
+        let selectedBody = null;
+        let cameraMode = 'free'; // 'free' o 'follow'
+        // let followDistance = 50; // No longer needed with OrbitControls
+        const minFollowDistance = 5;
+        const maxFollowDistance = 200;
+
+        // Función para crear etiquetas
+        function createLabel(name) {
+            const div = document.createElement('div');
+            div.className = 'planet-label';
+            div.textContent = name;
+            const label = new THREE.CSS2DObject(div);
+            label.position.set(0, 0, 0);
+            return label;
+        }
+
+        // Función para crear atmósfera con efecto de dispersión mejorado
+        function createAtmosphere(planet, radius, color) {
+            const geometry = new THREE.SphereGeometry(radius * 1.05, 64, 64);
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    glowColor: { type: "c", value: new THREE.Color(color) },
+                    viewVector: { type: "v3", value: camera.position },
+                    time: { type: "f", value: 0 }
+                },
+                vertexShader: `
+                    uniform vec3 viewVector;
+                    uniform float time;
+                    varying float intensity;
+                    varying vec3 vNormal;
+                    
+                    void main() {
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        vNormal = normalize(normalMatrix * normal);
+                        intensity = pow(0.8 - dot(vNormal, normalize(viewVector)), 2.0);
+                        
+                        // Pequeña animación para simular movimiento atmosférico
+                        intensity *= 0.9 + sin(time * 0.5 + position.y * 2.0) * 0.1;
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 glowColor;
+                    varying float intensity;
+                    varying vec3 vNormal;
+                    
+                    void main() {
+                        vec3 glow = glowColor * intensity;
+                        
+                        // Efecto de dispersión más realista
+                        float scatter = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+                        glow += glowColor * scatter * 0.3;
+                        
+                        gl_FragColor = vec4(glow, intensity * 0.5);
+                    }
+                `,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending,
+                transparent: true
+            });
+            
+            const atmosphere = new THREE.Mesh(geometry, material);
+            planet.add(atmosphere);
+            return atmosphere;
+        }
+
+        // Función para crear planetas
+        function createPlanet(options) {
+            const {
+                name,
+                radius,
+                distance,
+                textureUrl,
+                specularMapUrl,
+                bumpMapUrl,
+                cloudsUrl,
+                nightUrl,
+                orbitSpeed,
+                rotationSpeed,
+                retrograde = false,
+                tilt = 0,
+                ring,
+                hasAtmosphere = false,
+                atmosphereColor
+            } = options;
+
+            const planetInfoData = planetInfo[name.toLowerCase()] || { name: name };
+
+            const planetGroup = new THREE.Group();
+            planetGroup.userData.planetInfo = planetInfoData;
+            scene.add(planetGroup);
+
+            // Grupo para la inclinación axial
+            const planetAxisGroup = new THREE.Group();
+            planetAxisGroup.rotation.z = tilt;
+            planetGroup.add(planetAxisGroup);
+
+            // Geometría y material del planeta
+            const geometry = new THREE.SphereGeometry(radius, 64, 64);
+            const materialOptions = {
+                map: loadTexture(textureUrl),
+                shininess: 5
+            };
+
+            if (specularMapUrl) materialOptions.specularMap = loadTexture(specularMapUrl);
+            if (bumpMapUrl) materialOptions.bumpMap = loadTexture(bumpMapUrl);
+
+            const material = new THREE.MeshPhongMaterial(materialOptions);
+            const planet = new THREE.Mesh(geometry, material);
+            planet.castShadow = true;
+            planet.receiveShadow = true;
+            planetAxisGroup.add(planet);
+            
+            // Atmósfera mejorada
+            if (hasAtmosphere && atmosphereColor) {
+                planetGroup.userData.atmosphere = createAtmosphere(planetAxisGroup, radius, atmosphereColor);
+            }
+
+            // Nubes (para la Tierra)
+            let clouds = null;
+            if (cloudsUrl) {
+                const cloudGeometry = new THREE.SphereGeometry(radius * 1.01, 64, 64);
+                const cloudMaterial = new THREE.MeshPhongMaterial({
+                    map: loadTexture(cloudsUrl),
+                    transparent: true,
+                    opacity: 0.4,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                });
+                clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+                planetAxisGroup.add(clouds);
+            }
+
+            // Cara nocturna (para la Tierra)
+            if (nightUrl) {
+                material.emissiveMap = loadTexture(nightUrl);
+                material.emissive = new THREE.Color(0xffffff);
+                material.emissiveIntensity = 0.1;
+            }
+
+            // Anillos (para Saturno)
+            if (ring) {
+                const ringGeometry = new THREE.RingGeometry(ring.innerRadius, ring.outerRadius, 128);
+                const ringTexture = loadTexture(ring.textureUrl);
+                
+                const pos = ringGeometry.attributes.position;
+                const uv = ringGeometry.attributes.uv;
+                const v3 = new THREE.Vector3();
+                for (let i = 0; i < pos.count; i++){
+                    v3.fromBufferAttribute(pos, i);
+                    uv.setXY(i, v3.length() < (ring.innerRadius + ring.outerRadius) / 2 ? 0 : 1, 1);
+                }
+
+                const ringMaterial = new THREE.MeshPhongMaterial({
+                    map: ringTexture,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.8,
+                    shininess: 10
+                });
+                const ringMesh = new THREE.Mesh(ringGeometry, ringMaterial);
+                ringMesh.rotation.x = Math.PI / 2;
+                ringMesh.receiveShadow = true;
+                planetAxisGroup.add(ringMesh);
+            }
+
+            // Órbita
+            const orbitColor = planetInfoData.orbitColor || 0x555555;
+            const orbitCurve = new THREE.EllipseCurve(0, 0, distance, distance, 0, Math.PI * 2, false);
+            const orbitPoints = orbitCurve.getPoints(200);
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            const orbitMaterial = new THREE.LineBasicMaterial({ 
+                color: orbitColor, 
+                transparent: true, 
+                opacity: orbitsVisible ? 0.4 : 0 
+            });
+            const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
+            orbit.rotation.x = Math.PI / 2;
+            scene.add(orbit);
+            orbits.push(orbit);
+
+            // Etiqueta
+            const label = createLabel(planetInfoData.name); 
+            planet.add(label);
+            planet.userData.label = label;
+            
+            // Referencias para actualización
+            planetGroup.planetMesh = planet;
+            planetGroup.planetAxisGroup = planetAxisGroup;
+            planetGroup.clouds = clouds;
+
+            // Función de actualización para animación
+            planetGroup.update = function(time) {
+                const orbitAngle = time * orbitSpeed * (retrograde ? -1 : 1);
+                this.position.x = Math.cos(orbitAngle) * distance;
+                this.position.z = Math.sin(orbitAngle) * distance;
+
+                const rotationAngle = time * rotationSpeed * (retrograde ? -1 : 1);
+                planetAxisGroup.rotation.y = rotationAngle;
+
+                if (this.clouds) {
+                    this.clouds.rotation.y += rotationSpeed * 0.5;
+                }
+                
+                // Actualizar atmósfera si existe
+                if (this.userData.atmosphere) {
+                    this.userData.atmosphere.material.uniforms.time.value = time;
+                }
+            };
+
+            return planetGroup;
+        }
+
+        // Función para crear lunas
+        function createMoon(options) {
+            const {
+                name,
+                radius,
+                distance,
+                textureUrl,
+                bumpMapUrl,
+                parentPlanet,
+                orbitSpeed,
+                tilt = 0,
+                rotationSpeed = 0.005,
+                hasAtmosphere = false,
+                atmosphereColor
+            } = options;
+
+            const moonInfoData = planetInfo[name.toLowerCase()] || { name: name };
+
+            const moonOrbitGroup = new THREE.Group();
+            moonOrbitGroup.userData.planetInfo = moonInfoData;
+            parentPlanet.add(moonOrbitGroup);
+
+            const moonAxisGroup = new THREE.Group();
+            moonAxisGroup.rotation.z = tilt;
+            moonOrbitGroup.add(moonAxisGroup);
+
+            // Geometría y material de la luna
+            const geometry = new THREE.SphereGeometry(radius, 64, 64);
+            const material = new THREE.MeshPhongMaterial({
+                map: loadTexture(textureUrl),
+                bumpMap: bumpMapUrl ? loadTexture(bumpMapUrl) : null,
+                bumpScale: 0.005,
+                shininess: 1
+            });
+
+            // Malla de la luna
+            const moon = new THREE.Mesh(geometry, material);
+            moon.position.x = distance * 2;
+            moon.castShadow = true;
+            moon.receiveShadow = true;
+            moonAxisGroup.add(moon);
+
+            // Atmósfera para lunas como Titán
+            if (hasAtmosphere && atmosphereColor) {
+                moonOrbitGroup.userData.atmosphere = createAtmosphere(moonAxisGroup, radius, atmosphereColor);
+            }
+
+            // Órbita de la luna
+            const orbitColor = moonInfoData.orbitColor || 0x666666; 
+            const orbitCurve = new THREE.EllipseCurve(0, 0, distance * 2, distance * 2, 0, Math.PI * 2, false);
+            const orbitPoints = orbitCurve.getPoints(100); 
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            const orbitMaterial = new THREE.LineBasicMaterial({ 
+                color: orbitColor, 
+                transparent: true, 
+                opacity: orbitsVisible ? 0.25 : 0 
+            });
+            const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
+            orbit.rotation.x = Math.PI / 2;
+            moonOrbitGroup.add(orbit);
+            orbits.push(orbit);
+
+            // Etiqueta
+            const label = createLabel(moonInfoData.name); 
+            moon.add(label);
+            moon.userData.label = label;
+
+            moonOrbitGroup.moonMesh = moon;
+            moonOrbitGroup.moonAxisGroup = moonAxisGroup;
+
+            // Función de actualización para animación
+            moonOrbitGroup.update = function(time) {
+                const orbitAngle = time * orbitSpeed;
+                this.position.x = Math.cos(orbitAngle) * distance;
+                this.position.z = Math.sin(orbitAngle) * distance;
+                moonAxisGroup.rotation.y += rotationSpeed;
+                
+                // Actualizar atmósfera si existe
+                if (this.userData.atmosphere) {
+                    this.userData.atmosphere.material.uniforms.time.value = time;
+                }
+            };
+
+            return moonOrbitGroup;
+        }
+
+        // Creación de planetas y lunas 
+        planets.mercury = createPlanet({
+            name: 'mercury',
+            radius: planetScales.mercury,
+            distance: planetDistances.mercury,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_mercury.jpg',
+            orbitSpeed: 0.004,
+            rotationSpeed: 0.004,
+            tilt: 0.034 * Math.PI / 180
+        });
+
+        planets.venus = createPlanet({
+            name: 'venus',
+            radius: planetScales.venus,
+            distance: planetDistances.venus,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_venus_surface.jpg',
+            orbitSpeed: 0.0015,
+            rotationSpeed: 0.0015,
+            retrograde: true,
+            tilt: 177.36 * Math.PI / 180,
+            hasAtmosphere: true,
+            atmosphereColor: 0xffccaa
+        });
+
+        planets.earth = createPlanet({
+            name: 'earth',
+            radius: planetScales.earth,
+            distance: planetDistances.earth,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_earth_daymap.jpg',
+            specularMapUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_earth_specular_map.tif',
+            bumpMapUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_earth_normal_map.tif',
+            cloudsUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_earth_clouds.jpg',
+            nightUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_earth_nightmap.jpg',
+            orbitSpeed: 0.001,
+            rotationSpeed: 0.01,
+            tilt: 23.44 * Math.PI / 180,
+            hasAtmosphere: true,
+            atmosphereColor: 0x7ec0ee
+        });
+
+        planets.moon = createMoon({
+            name: 'moon',
+            radius: planetScales.moon,
+            distance: 5,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_moon.jpg',
+            bumpMapUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_moon_bump.jpg',
+            parentPlanet: planets.earth,
+            orbitSpeed: 0.005,
+            rotationSpeed: 0.005,
+            tilt: 6.68 * Math.PI / 180
+        });
+
+        planets.mars = createPlanet({
+            name: 'mars',
+            radius: planetScales.mars,
+            distance: planetDistances.mars,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_mars.jpg',
+            orbitSpeed: 0.0008,
+            rotationSpeed: 0.008,
+            tilt: 25.19 * Math.PI / 180,
+            hasAtmosphere: true,
+            atmosphereColor: 0xff6633
+        });
+
+        // Lunas de Marte
+        planets.phobos = createMoon({
+            name: 'phobos',
+            radius: planetScales.phobos,
+            distance: 3,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_phobos.jpg',
+            parentPlanet: planets.mars,
+            orbitSpeed: 0.03,
+            rotationSpeed: 0.03
+        });
+
+        planets.deimos = createMoon({
+            name: 'deimos',
+            radius: planetScales.deimos,
+            distance: 5,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_deimos.jpg',
+            parentPlanet: planets.mars,
+            orbitSpeed: 0.02,
+            rotationSpeed: 0.02
+        });
+
+        planets.jupiter = createPlanet({
+            name: 'jupiter',
+            radius: planetScales.jupiter,
+            distance: planetDistances.jupiter,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_jupiter.jpg',
+            orbitSpeed: 0.0003,
+            rotationSpeed: 0.02,
+            tilt: 3.13 * Math.PI / 180
+        });
+
+        planets.io = createMoon({
+            name: 'io', 
+            radius: planetScales.io,
+            distance: 15,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_io.jpg',
+            parentPlanet: planets.jupiter,
+            orbitSpeed: 0.02,
+            rotationSpeed: 0.02,
+            tilt: 0
+        });
+
+        planets.europa = createMoon({
+            name: 'europa', 
+            radius: planetScales.europa,
+            distance: 18,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_europa.jpg',
+            parentPlanet: planets.jupiter,
+            orbitSpeed: 0.015,
+            rotationSpeed: 0.015,
+            tilt: 0
+        });
+
+        planets.ganymede = createMoon({
+            name: 'ganymede', 
+            radius: planetScales.ganymede,
+            distance: 23,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_ganymede.jpg',
+            parentPlanet: planets.jupiter,
+            orbitSpeed: 0.01,
+            rotationSpeed: 0.01,
+            tilt: 0
+        });
+
+        planets.callisto = createMoon({
+            name: 'callisto', 
+            radius: planetScales.callisto,
+            distance: 29,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_callisto.jpg',
+            parentPlanet: planets.jupiter,
+            orbitSpeed: 0.007,
+            rotationSpeed: 0.007,
+            tilt: 0
+        });
+
+        planets.saturn = createPlanet({
+            name: 'saturn',
+            radius: planetScales.saturn,
+            distance: planetDistances.saturn,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_saturn.jpg',
+            orbitSpeed: 0.0002,
+            rotationSpeed: 0.018,
+            tilt: 26.73 * Math.PI / 180,
+            ring: {
+                innerRadius: planetScales.saturn * 1.2,
+                outerRadius: planetScales.saturn * 2.2,
+                textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_saturn_ring_alpha.png'
+            },
+            hasAtmosphere: true,
+            atmosphereColor: 0xddddbb
+        });
+
+        // Lunas de Saturno
+        planets.titan = createMoon({
+            name: 'titan',
+            radius: planetScales.titan,
+            distance: 20,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_titan.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.008,
+            rotationSpeed: 0.008,
+        });
+
+        planets.enceladus = createMoon({
+            name: 'enceladus',
+            radius: planetScales.enceladus,
+            distance: 15,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_enceladus.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.012,
+            rotationSpeed: 0.012
+        });
+
+        planets.mimas = createMoon({
+            name: 'mimas',
+            radius: planetScales.mimas,
+            distance: 10,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_mimas.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.015,
+            rotationSpeed: 0.015
+        });
+
+        planets.rhea = createMoon({
+            name: 'rhea',
+            radius: planetScales.rhea,
+            distance: 18,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_rhea.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.01,
+            rotationSpeed: 0.01
+        });
+
+        planets.iapetus = createMoon({
+            name: 'iapetus',
+            radius: planetScales.iapetus,
+            distance: 30, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_iapetus.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.001,
+            rotationSpeed: 0.001
+        });
+        planets.dione = createMoon({
+            name: 'dione',
+            radius: planetScales.dione,
+            distance: 9, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_dione.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.009,
+            rotationSpeed: 0.009
+        });
+        planets.tethys = createMoon({
+            name: 'tethys',
+            radius: planetScales.tethys,
+            distance: 7, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_tethys.jpg',
+            parentPlanet: planets.saturn,
+            orbitSpeed: 0.011,
+            rotationSpeed: 0.011
+        });
+
+        planets.uranus = createPlanet({
+            name: 'uranus',
+            radius: planetScales.uranus,
+            distance: planetDistances.uranus,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_uranus.jpg',
+            orbitSpeed: 0.00015,
+            rotationSpeed: 0.015,
+            tilt: 97.77 * Math.PI / 180,
+            hasAtmosphere: true,
+            atmosphereColor: 0x99ccff
+        });
+
+        // Lunas de Urano
+        planets.miranda = createMoon({
+            name: 'miranda',
+            radius: planetScales.miranda,
+            distance: 7, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_miranda.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.01,
+            rotationSpeed: 0.01
+        });
+        planets.ariel = createMoon({
+            name: 'ariel',
+            radius: planetScales.ariel,
+            distance: 9, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_ariel.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.008,
+            rotationSpeed: 0.008
+        });
+        planets.umbriel = createMoon({
+            name: 'umbriel',
+            radius: planetScales.umbriel,
+            distance: 12, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_umbriel.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.006,
+            rotationSpeed: 0.006
+        });
+        planets.titania = createMoon({
+            name: 'titania',
+            radius: planetScales.titania,
+            distance: 18, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_titania.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.004,
+            rotationSpeed: 0.004
+        });
+        planets.oberon = createMoon({
+            name: 'oberon',
+            radius: planetScales.oberon,
+            distance: 25, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_oberon.jpg',
+            parentPlanet: planets.uranus,
+            orbitSpeed: 0.003,
+            rotationSpeed: 0.003
+        });
+
+        planets.neptune = createPlanet({
+            name: 'neptune',
+            radius: planetScales.neptune,
+            distance: planetDistances.neptune,
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_neptune.jpg',
+            orbitSpeed: 0.0001,
+            rotationSpeed: 0.016,
+            tilt: 28.32 * Math.PI / 180,
+            hasAtmosphere: true,
+            atmosphereColor: 0x3366ff
+        });
+
+        // Lunas de Neptuno
+        planets.triton = createMoon({
+            name: 'triton',
+            radius: planetScales.triton,
+            distance: 10, // distancia escalada
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_triton.jpg',
+            parentPlanet: planets.neptune,
+            orbitSpeed: 0.008,
+            rotationSpeed: 0.008,
+            retrograde: true,
+            tilt: 157.35 * Math.PI / 180 // Inclinación axial de Tritón
+        });
+        planets.nereid = createMoon({
+            name: 'nereid',
+            radius: planetScales.nereid,
+            distance: 30, // distancia escalada, Nereida tiene una órbita muy excéntrica
+            textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_nereid.jpg', // Placeholder, use a generic moon texture if specific not available
+            parentPlanet: planets.neptune,
+            orbitSpeed: 0.0005, // Menor velocidad por su órbita lejana
+            rotationSpeed: 0.005
+        });
+
+        // Sistema de selección de planetas
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onMouseClick(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            if (intersects.length > 0) {
+                let obj = intersects[0].object;
+                while (obj.parent && !obj.userData.planetInfo && obj !== sunMesh) { // Check for sunMesh too
+                    obj = obj.parent;
+                }
+                
+                if (obj.userData.planetInfo) { // For planets and moons
+                    showPlanetInfo(obj.userData.planetInfo);
+                    
+                    // Seleccionar el cuerpo para seguimiento
+                    selectedBody = obj;
+                    cameraMode = 'follow';
+                    
+                    // Ajustar distancia inicial basada en el tamaño del cuerpo
+                    let targetRadius;
+                    if (obj.planetMesh) {
+                        targetRadius = obj.planetMesh.geometry.parameters.radius;
+                    } else if (obj.moonMesh) {
+                        targetRadius = obj.moonMesh.geometry.parameters.radius;
+                    } else if (obj === sunMesh) { // Should not happen here, but for safety
+                         targetRadius = sunMesh.geometry.parameters.radius;
+                    }
+
+                    // Set initial camera position relative to the object and update controls
+                    const targetWorldPosition = new THREE.Vector3();
+                    obj.getWorldPosition(targetWorldPosition); // Get world position of the GROUP (planetGroup or moonOrbitGroup)
+
+                    // Position the camera
+                    camera.position.copy(targetWorldPosition).add(new THREE.Vector3(targetRadius * 5, targetRadius * 3, targetRadius * 5));
+                    
+                    // Set controls target to the object's world position
+                    controls.target.copy(targetWorldPosition);
+                    controls.minDistance = targetRadius * 2; // Allow closer zoom
+                    controls.maxDistance = targetRadius * 50; // Allow further zoom
+
+                    controls.update(); // Update controls to reflect new target and distance
+                    
+                    updateCameraStatus();
+                } else if (obj === sunMesh) { // For the Sun
+                    showPlanetInfo({
+                        name: "Sol",
+                        type: "Estrella",
+                        diameter: "1,392,000 km",
+                        distance: "0 km",
+                        orbitalPeriod: "N/A",
+                        rotationPeriod: "25-35 días terrestres",
+                        temperature: "5,500°C (superficie)",
+                        moons: "N/A",
+                        facts: [
+                            "Es el centro de nuestro Sistema Solar.",
+                            "Compuesto principalmente de hidrógeno y helio.",
+                            "Su energía proviene de la fusión nuclear."
+                        ],
+                        missions: ["Parker Solar Probe (2018-presente)", "Solar Orbiter (2020-presente)"],
+                        composition: "Hidrógeno (73%), Helio (25%)",
+                        discovery: "Conocido desde la antigüedad"
+                    });
+                    selectedBody = obj;
+                    cameraMode = 'follow';
+
+                    const targetRadius = sunMesh.geometry.parameters.radius;
+                    const targetWorldPosition = new THREE.Vector3();
+                    sunMesh.getWorldPosition(targetWorldPosition);
+
+                    camera.position.copy(targetWorldPosition).add(new THREE.Vector3(targetRadius * 5, targetRadius * 3, targetRadius * 5));
+
+                    controls.target.copy(targetWorldPosition);
+                    controls.minDistance = targetRadius * 2;
+                    controls.maxDistance = targetRadius * 50;
+                    controls.update();
+                    
+                    updateCameraStatus();
+                }
+            }
+        }
+
+        window.addEventListener('click', onMouseClick, false);
+
+        // Mostrar información del planeta
+        function showPlanetInfo(info) {
+            const infoPanel = document.getElementById('infoPanel');
+            const planetName = document.getElementById('planetName');
+            const planetContent = document.getElementById('planetContent');
+            
+            planetName.textContent = info.name;
+            
+            let contentHTML = `
+                <p><strong>Tipo:</strong> ${info.type || 'N/A'}</p>
+                <p><strong>Diámetro:</strong> ${info.diameter || 'N/A'}</p>
+                <p><strong>Distancia al Sol:</strong> ${info.distance || 'N/A'}</p>
+                <p><strong>Periodo orbital:</strong> ${info.orbitalPeriod || 'N/A'}</p>
+                <p><strong>Periodo de rotación:</strong> ${info.rotationPeriod || 'N/A'}</p>
+                <p><strong>Temperatura:</strong> ${info.temperature || 'N/A'}</p>
+                <p><strong>Lunas:</strong> ${info.moons !== undefined ? info.moons : 'N/A'}</p>
+                
+                ${info.composition ? `<div class="fact-box"><strong>Composición:</strong> ${info.composition}</div>` : ''}
+                
+                ${info.facts && info.facts.length > 0 ? `
+                    <h4>Datos interesantes:</h4>
+                    <ul style="padding-left: 20px; margin-top: 5px;">
+                        ${info.facts.map(fact => `<li>${fact}</li>`).join('')}
+                    </ul>
+                ` : ''}
+                
+                ${info.missions && info.missions.length > 0 ? `
+                    <h4>Misiones importantes:</h4>
+                    <ul style="padding-left: 20px; margin-top: 5px;">
+                        ${info.missions.map(mission => `<li>${mission}</li>`).join('')}
+                    </ul>
+                ` : ''}
+                
+                <p><em>${info.discovery || 'N/A'}</em></p>
+            `;
+            
+            // Actualizar panel de comparaciones
+            updateComparisonPanel(info);
+            
+            planetContent.innerHTML = contentHTML;
+            infoPanel.style.display = 'block';
+        }
+
+        // Actualizar panel de comparaciones
+        function updateComparisonPanel(planetInfo) {
+            const comparisonsTab = document.getElementById('comparisons');
+            
+            // Solo mostrar comparaciones para planetas (no lunas o Sol)
+            if (planetInfo.type && planetInfo.type.includes("Planeta")) {
+                const earthDiameter = 12742;
+                const planetDiameter = parseFloat(planetInfo.diameter.replace(/[^\d.]/g, ''));
+                const diameterRatio = (planetDiameter / earthDiameter).toFixed(2);
+                
+                const earthDistance = 149.6;
+                const planetDistance = parseFloat(planetInfo.distance.split(" ")[0]);
+                const distanceRatio = (planetDistance / earthDistance).toFixed(2);
+                
+                comparisonsTab.innerHTML = `
+                    <h4>Comparado con la Tierra:</h4>
+                    
+                    <div class="comparison-container">
+                        <div class="comparison-item">
+                            <div>Diámetro</div>
+                            <div class="comparison-bar" style="width: ${Math.min(diameterRatio * 100, 100)}%"></div>
+                            <div>${diameterRatio}x</div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-container">
+                        <div class="comparison-item">
+                            <div>Distancia al Sol</div>
+                            <div class="comparison-bar" style="width: ${Math.min(distanceRatio * 20, 100)}%"></div>
+                            <div>${distanceRatio}x</div>
+                        </div>
+                    </div>
+                    
+                    <div class="fact-box">
+                        <strong>Gravedad superficial:</strong> 
+                        ${calculateSurfaceGravity(planetInfo.name.toLowerCase(), planetDiameter).toFixed(2)} g
+                        (${(calculateSurfaceGravity(planetInfo.name.toLowerCase(), planetDiameter) * 9.8).toFixed(2)} m/s²)
+                    </div>
+                `;
+            } else {
+                comparisonsTab.innerHTML = `<p>Selecciona un planeta para ver comparaciones con la Tierra</p>`;
+            }
+        }
+
+        // Calcular gravedad superficial (simplificado)
+        function calculateSurfaceGravity(planetName, diameterKm) {
+            const masses = {
+                mercury: 0.055,
+                venus: 0.815,
+                earth: 1,
+                mars: 0.107,
+                jupiter: 317.8,
+                saturn: 95.2,
+                uranus: 14.5,
+                neptune: 17.1,
+                // Simplified mass for sun/moon/moons, not strictly accurate for gravity calc but keeps the function generic
+                sun: 333000, 
+                moon: 0.0123,
+                phobos: 0.000000001, // Placeholder, very small
+                deimos: 0.0000000001, // Placeholder, very small
+                io: 0.015,
+                europa: 0.008,
+                ganymede: 0.025,
+                callisto: 0.018,
+                titan: 0.0225,
+                enceladus: 0.0000001,
+                mimas: 0.00000001,
+                rhea: 0.000001
+            };
+            
+            const radius = diameterKm / 12742; // Radius relative to Earth's
+            return (masses[planetName] || 1) / (radius * radius); // Default to 1 if mass not found
+        }
+
+        // Cerrar panel de información
+        document.querySelector('#infoPanel .close-btn').addEventListener('click', function() {
+            document.getElementById('infoPanel').style.display = 'none';
+        });
+
+        // Controles de simulación
+        let simulationSpeed = 1;
+        let isPaused = false;
+        let simulatedDays = 0;
+
+        document.getElementById('pauseBtn').addEventListener('click', function() {
+            isPaused = !isPaused;
+            this.textContent = isPaused ? "Reanudar" : "Pausa";
+            this.classList.toggle('active', isPaused);
+        });
+
+        document.getElementById('slowBtn').addEventListener('click', function() {
+            simulationSpeed = 0.5;
+            updateSpeedControls();
+            setActiveButton(this);
+        });
+
+        document.getElementById('normalBtn').addEventListener('click', function() {
+            simulationSpeed = 1;
+            updateSpeedControls();
+            setActiveButton(this);
+        });
+
+        document.getElementById('fastBtn').addEventListener('click', function() {
+            simulationSpeed = 5;
+            updateSpeedControls();
+            setActiveButton(this);
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', function(e) {
+            simulationSpeed = parseFloat(e.target.value);
+            updateSpeedControls();
+        });
+
+        function updateSpeedControls() {
+            document.getElementById('speedValue').textContent = simulationSpeed.toFixed(1);
+            document.getElementById('speedSlider').value = simulationSpeed;
+        }
+
+        function setActiveButton(button) {
+            document.querySelectorAll('#controlsPanel button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+        }
+
+        // Mostrar/ocultar órbitas
+        document.getElementById('toggleOrbits').addEventListener('click', function() {
+            orbitsVisible = !orbitsVisible;
+            this.textContent = orbitsVisible ? "Ocultar órbitas" : "Mostrar órbitas";
+            this.classList.toggle('active', !orbitsVisible);
+            
+            orbits.forEach(orbit => {
+                orbit.material.opacity = orbitsVisible ? 0.4 : 0; 
+                orbit.material.needsUpdate = true;
+            });
+            // Asegurarse de que las lunas también se ajusten
+            Object.values(planets).forEach(body => {
+                if (body.userData.planetInfo.type && body.userData.planetInfo.type.includes("Satélite")) {
+                    
+                    body.children.forEach(child => { 
+                        if (child instanceof THREE.Line) { 
+                            child.material.opacity = orbitsVisible ? 0.25 : 0;
+                            child.material.needsUpdate = true;
+                        }
+                    });
+                }
+            });
+        });
+
+        // Función para manejar la visibilidad de las etiquetas
+        function toggleLabelsVisibility() {
+            // Toggle Sun label
+            if (sunMesh.userData.label) {
+                sunMesh.userData.label.element.style.display = labelsVisible ? 'block' : 'none';
+            }
+
+            // Toggle Planet and Moon labels
+            Object.values(planets).forEach(body => {
+                let meshWithLabel = null;
+                if (body.planetMesh) { 
+                    meshWithLabel = body.planetMesh;
+                } else if (body.moonMesh) { 
+                    meshWithLabel = body.moonMesh;
+                }
+
+                if (meshWithLabel && meshWithLabel.userData.label) {
+                    meshWithLabel.userData.label.element.style.display = labelsVisible ? 'block' : 'none';
+                }
+            });
+            // Actualizar el botón de la UI
+            const btn = document.getElementById('toggleLabels');
+            btn.textContent = labelsVisible ? "Ocultar nombres" : "Mostrar nombres";
+            btn.classList.toggle('active', !labelsVisible);
+        }
+
+        // Mostrar/ocultar etiquetas
+        document.getElementById('toggleLabels').addEventListener('click', function() {
+            labelsVisible = !labelsVisible;
+            toggleLabelsVisibility();
+        });
+
+        // Botón para alternar modo seguimiento
+        document.getElementById('toggleFollow').addEventListener('click', function() {
+            if (selectedBody) {
+                cameraMode = cameraMode === 'free' ? 'follow' : 'free';
+                if (cameraMode === 'free') {
+                    // Reset controls target to origin when going back to free mode
+                    controls.target.set(0, 0, 0);
+                    controls.minDistance = 20;
+                    controls.maxDistance = 1000;
+                }
+                updateCameraStatus();
+            }
+        });
+
+        // Pestañas del panel educativo
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Actualizar botones activos
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Actualizar contenido visible
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Actualizar estado de la cámara en la UI
+        function updateCameraStatus() {
+            const cameraStatus = document.getElementById('cameraStatus');
+            if (cameraMode === 'follow' && selectedBody) {
+                let selectedName = "";
+                if (selectedBody === sunMesh) {
+                    selectedName = "Sol";
+                } else if (selectedBody.userData.planetInfo) {
+                    selectedName = selectedBody.userData.planetInfo.name;
+                }
+                cameraStatus.textContent = `Modo: Seguir • Selección: ${selectedName}`;
+                cameraStatus.style.display = 'block';
+                document.getElementById('toggleFollow').textContent = "Modo Libre (F)";
+                document.getElementById('toggleFollow').classList.add('active');
+            } else {
+                cameraStatus.textContent = `Modo: Libre • Selección: Ninguna`;
+                cameraStatus.style.display = 'block';
+                document.getElementById('toggleFollow').textContent = "Modo Seguir (F)";
+                document.getElementById('toggleFollow').classList.remove('active');
+            }
+        }
+
+        // Controles de teclado
+        function handleKeyDown(event) {
+            switch(event.key.toLowerCase()) {
+                case 'm':
+                    educationPanelVisible = !educationPanelVisible;
+                    document.getElementById('educationPanel').style.display = educationPanelVisible ? 'block' : 'none';
+                    break;
+                
+                case 'n':
+                    labelsVisible = !labelsVisible;
+                    toggleLabelsVisibility();
+                    break;
+                
+                case 'o':
+                    orbitsVisible = !orbitsVisible;
+                    document.getElementById('toggleOrbits').click();
+                    break;
+                
+                case 'c':
+                    controlsPanelVisible = !controlsPanelVisible;
+                    document.getElementById('controlsPanel').style.display = controlsPanelVisible ? 'block' : 'none';
+                    break;
+                
+                case 'h':
+                    const helpPanel = document.getElementById('helpPanel');
+                    helpPanel.style.display = helpPanel.style.display === 'none' ? 'block' : 'none';
+                    break;
+                
+                case 'f':
+                    // Alternar modo de cámara
+                    if (selectedBody) {
+                        cameraMode = cameraMode === 'free' ? 'follow' : 'free';
+                        if (cameraMode === 'free') {
+                            // Reset controls target to origin when going back to free mode
+                            controls.target.set(0, 0, 0);
+                            controls.minDistance = 20;
+                            controls.maxDistance = 1000;
+                        } else {
+                            // Set controls target to the selected body's current position
+                            const targetWorldPosition = new THREE.Vector3();
+                            let meshToFollow = selectedBody;
+                            if (selectedBody.planetMesh) {
+                                meshToFollow = selectedBody.planetMesh;
+                            } else if (selectedBody.moonMesh) {
+                                meshToFollow = selectedBody.moonMesh;
+                            }
+                            meshToFollow.getWorldPosition(targetWorldPosition);
+                            controls.target.copy(targetWorldPosition);
+
+                            let targetRadius;
+                            if (selectedBody.planetMesh) {
+                                targetRadius = selectedBody.planetMesh.geometry.parameters.radius;
+                            } else if (selectedBody.moonMesh) {
+                                targetRadius = selectedBody.moonMesh.geometry.parameters.radius;
+                            } else if (selectedBody === sunMesh) {
+                                targetRadius = sunMesh.geometry.parameters.radius;
+                            }
+                            controls.minDistance = targetRadius * 2;
+                            controls.maxDistance = targetRadius * 50;
+                        }
+                        controls.update(); // Important to update controls after changing target/min/maxDistance
+                        updateCameraStatus();
+                    }
+                    break;
+                
+                case 'escape':
+                    // Salir del modo de seguimiento
+                    cameraMode = 'free';
+                    selectedBody = null; // Deselect body
+                    // Reset controls target to origin and default zoom limits
+                    controls.target.set(0, 0, 0);
+                    controls.minDistance = 20;
+                    controls.maxDistance = 1000;
+                    controls.update(); // Important to update controls after changing target/min/maxDistance
+                    updateCameraStatus();
+                    break;
+            }
+        }
+
+        // Manejar zoom de la rueda del ratón - No longer needed, OrbitControls handles it
+        // function handleMouseWheel(event) {
+        //     if (cameraMode === 'follow' && selectedBody) {
+        //         followDistance -= event.deltaY * 0.05;
+        //         followDistance = Math.min(Math.max(followDistance, minFollowDistance), maxFollowDistance);
+        //     }
+        // }
+        // window.addEventListener('wheel', handleMouseWheel);
+
+        // Función para actualizar la posición de la cámara en modo seguimiento
+        // This function is no longer needed since OrbitControls handles the camera movement and rotation
+        // in follow mode. We only need to update controls.target.
+        function updateCameraTargetInFollowMode() {
+            if (cameraMode === 'follow' && selectedBody) {
+                let meshToFollow = selectedBody;
+                if (selectedBody.planetMesh) {
+                    meshToFollow = selectedBody.planetMesh;
+                } else if (selectedBody.moonMesh) {
+                    meshToFollow = selectedBody.moonMesh;
+                }
+                
+                const targetWorldPosition = new THREE.Vector3();
+                meshToFollow.getWorldPosition(targetWorldPosition);
+                controls.target.copy(targetWorldPosition);
+            }
+        }
+
+        // Animación
+        let time = 0;
+        let lastTime = Date.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const now = Date.now();
+            const delta = now - lastTime;
+            lastTime = now;
+            
+            if (!isPaused) {
+                time += 0.05 * simulationSpeed;
+                simulatedDays += (delta * simulationSpeed) / 1000;
+                
+                document.getElementById('timeDisplay').textContent = 
+                    `Tiempo simulado: ${Math.floor(simulatedDays)} días`;
+                
+                // Actualizar uniformes del sol
+                sunMaterial.uniforms.time.value = time;
+                
+                // Rotación solar
+                sunMesh.rotation.y += 0.001 * simulationSpeed;
+                sunGlow.rotation.y += 0.0005 * simulationSpeed;
+                
+                // Update sun glow material view vector
+                sunGlow.material.uniforms.viewVector.value.copy(camera.position);
+
+                // Update atmosphere materials view vector and time
+                if (sunMesh.userData.atmosphere) {
+                    sunMesh.userData.atmosphere.material.uniforms.viewVector.value.copy(camera.position);
+                    sunMesh.userData.atmosphere.material.uniforms.time.value = time;
+                }
+                
+                // Actualizar planetas y lunas
+                Object.values(planets).forEach(body => {
+                    if (body.update) body.update(time);
+                    // Update atmosphere materials view vector for planets/moons
+                    if (body.userData.atmosphere) {
+                        body.userData.atmosphere.material.uniforms.viewVector.value.copy(camera.position);
+                    }
+                });
+            }
+            
+            // Actualizar el objetivo de la cámara en modo seguimiento
+            updateCameraTargetInFollowMode();
+            
+            // controls.enabled is now always true, but its target changes
+            controls.update();
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+
+        // Redimensionamiento
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Agregar event listener para teclado
+        window.addEventListener('keydown', handleKeyDown);
+
+        // Initial setup for labels visibility
+        toggleLabelsVisibility();
+
+        // Iniciar animación
+        animate();
+    </script>
+</body>
+</html>
