@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Solar Interactivo Educativo</title>
+    <title>Interactive Educational Solar System</title>
     <style>
         body {
             margin: 0;
@@ -200,71 +200,71 @@
     </style>
 </head>
 <body>
-    <div id="info">Sistema Solar Educativo • Usa el ratón para rotar, rueda para zoom • Haz clic en planetas para información</div>
-    <div id="timeDisplay">Tiempo simulado: 0 días</div>
-    <div id="cameraStatus">Modo: Libre • Selección: Ninguna</div>
+    <div id="info">Solar System • Use mouse to rotate, scroll to zoom • Click for information • ESC to stop following selection</div>
+    <div id="timeDisplay">Simulated time: 0 days</div>
+    <div id="cameraStatus">Mode: Free • Selection: None</div>
     <div id="infoPanel">
         <button class="close-btn">×</button>
-        <h3 id="planetName">Planeta</h3>
+        <h3 id="planetName">Planet</h3>
         <div id="planetContent"></div>
     </div>
     <div id="controlsPanel">
-        <h3>Controles</h3>
+        <h3>Controls</h3>
         <div>
-            <button id="pauseBtn">Pausa</button>
-            <button id="slowBtn">Lento</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="slowBtn">Slow</button>
             <button id="normalBtn" class="active">Normal</button>
-            <button id="fastBtn">Rápido</button>
+            <button id="fastBtn">Fast</button>
         </div>
         <div>
-            <label>Velocidad: <span id="speedValue">1</span>x</label>
+            <label>Speed: <span id="speedValue">1</span>x</label>
             <input type="range" id="speedSlider" min="0" max="20" step="0.1" value="1">
         </div>
         <div style="margin-top: 15px;">
-            <button id="toggleOrbits">Mostrar órbitas</button>
-            <button id="toggleLabels">Mostrar nombres</button>
-            <button id="toggleFollow">Modo Seguir (F)</button>
+            <button id="toggleOrbits">Show orbits</button>
+            <button id="toggleLabels">Show names</button>
+            <button id="toggleFollow">Follow Mode (F)</button>
         </div>
     </div>
     <div id="educationPanel">
-        <h3>Modo Educativo</h3>
+        <h3>Educational Mode</h3>
         <div class="tab-buttons">
-            <button class="tab-btn active" data-tab="comparisons">Comparaciones</button>
-            <button class="tab-btn" data-tab="facts">Datos curiosos</button>
-            <button class="tab-btn" data-tab="missions">Misiones</button>
+            <button class="tab-btn active" data-tab="comparisons">Comparisons</button>
+            <button class="tab-btn" data-tab="facts">Fun Facts</button>
+            <button class="tab-btn" data-tab="missions">Missions</button>
         </div>
         <div class="tab-content active" id="comparisons">
-            <p>Selecciona un planeta para ver comparaciones con la Tierra</p>
+            <p>Select a planet to see comparisons with Earth</p>
         </div>
         <div class="tab-content" id="facts">
             <div class="fact-box">
-                <strong>El Sol contiene el 99.86%</strong> de la masa de todo el Sistema Solar.
+                <strong>The Sun contains 99.86%</strong> of the mass of the entire Solar System.
             </div>
             <div class="fact-box">
-                <strong>Un día en Venus</strong> es más largo que un año en Venus (243 días terrestres vs 225 días terrestres).
+                <strong>A day on Venus</strong> is longer than a year on Venus (243 Earth days vs 225 Earth days).
             </div>
         </div>
         <div class="tab-content" id="missions">
-            <p><strong>Misiones recientes:</strong></p>
+            <p><strong>Recent missions:</strong></p>
             <ul style="padding-left: 20px;">
-                <li>Perseverance (Marte, 2021)</li>
-                <li>Parker Solar Probe (Sol, 2018)</li>
-                <li>Europa Clipper (Júpiter, prevista 2024)</li>
+                <li>Perseverance (Mars, 2021)</li>
+                <li>Parker Solar Probe (Sun, 2018)</li>
+                <li>Europa Clipper (Jupiter, planned 2024)</li>
             </ul>
         </div>
     </div>
     <div id="helpPanel">
-        <h3>Controles de Teclado</h3>
+        <h3>Keyboard Controls</h3>
         <ul style="padding-left: 20px;">
-            <li><strong>M</strong>: Mostrar/ocultar panel educativo</li>
-            <li><strong>N</strong>: Mostrar/ocultar nombres</li>
-            <li><strong>O</strong>: Mostrar/ocultar órbitas</li>
-            <li><strong>C</strong>: Mostrar/ocultar controles</li>
-            <li><strong>H</strong>: Mostrar/ocultar esta ayuda</li>
-            <li><strong>Clic en planeta/luna</strong>: Seleccionar para seguimiento</li>
-            <li><strong>F</strong>: Alternar modo de cámara libre/seguimiento</li>
-            <li><strong>Rueda del ratón</strong>: Acercar/alejar en modo seguimiento</li>
-            <li><strong>ESC</strong>: Salir del modo seguimiento</li>
+            <li><strong>M</strong>: Show/hide education panel</li>
+            <li><strong>N</strong>: Show/hide names</li>
+            <li><strong>O</strong>: Show/hide orbits</li>
+            <li><strong>C</strong>: Show/hide controls</li>
+            <li><strong>H</strong>: Show/hide this help</li>
+            <li><strong>Click planet/moon</strong>: Select to follow</li>
+            <li><strong>F</strong>: Toggle free/follow camera mode</li>
+            <li><strong>Mouse wheel</strong>: Zoom in/out in follow mode</li>
+            <li><strong>ESC</strong>: Exit follow mode</li>
         </ul>
     </div>
     
@@ -272,7 +272,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
     <script>
-        // Escena y configuración inicial
+        // Scene and initial setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
         camera.position.z = 250;
@@ -291,7 +291,7 @@
         labelRenderer.domElement.style.pointerEvents = 'none';
         document.body.appendChild(labelRenderer.domElement);
 
-        // Controles de cámara
+        // Camera controls
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
@@ -299,7 +299,7 @@
         controls.maxDistance = 1000;
         controls.screenSpacePanning = true;
 
-        // Cargador de texturas
+        // Texture loader
         const textureLoader = new THREE.TextureLoader();
         function loadTexture(path) {
             const texture = textureLoader.load(path);
@@ -307,7 +307,7 @@
             return texture;
         }
 
-        // Campo de estrellas mejorado
+        // Enhanced starfield
         function createStarfield() {
             const starCount = 10000;
             const geometry = new THREE.BufferGeometry();
@@ -352,7 +352,7 @@
         }
         scene.add(createStarfield());
 
-        // Sol con corona reducida
+        // Sun with reduced corona
         const sunGeometry = new THREE.SphereGeometry(15, 64, 64);
         const sunTexture = loadTexture('https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_sun.jpg');
         const sunEmissionMap = loadTexture('https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_sun_emission.jpg');
@@ -385,10 +385,10 @@
                     vec4 texColor = texture2D(sunTexture, vUv);
                     vec4 emissionColor = texture2D(emissionMap, vUv);
                     
-                    // Efecto de llamaradas solares más sutil
+                    // More subtle solar flare effect
                     float flare = 0.9 + sin(time * 0.3) * 0.1;
                     
-                    // Color final más natural
+                    // More natural final color
                     vec3 finalColor = texColor.rgb * flare + emissionColor.rgb * 0.3;
                     
                     gl_FragColor = vec4(finalColor, 1.0);
@@ -400,17 +400,17 @@
         const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
         scene.add(sunMesh);
 
-        // Etiqueta del Sol
-        const sunLabel = createLabel("Sol");
+        // Sun label
+        const sunLabel = createLabel("Sun");
         sunMesh.add(sunLabel);
         sunMesh.userData.label = sunLabel; // Store reference to the label
 
-        // Resplandor solar reducido
+        // Reduced solar glow
         const sunGlowGeometry = new THREE.SphereGeometry(15, 32, 32);
         const sunGlowMaterial = new THREE.ShaderMaterial({
             uniforms: {
-                glowColor: { type: 'c', value: new THREE.Color(0xffaa33) },
-                viewVector: { type: 'v3', value: camera.position }
+                glowColor: { type: "c", value: new THREE.Color(0xffaa33) },
+                viewVector: { type: "v3", value: camera.position }
             },
             vertexShader: `
                 uniform vec3 viewVector;
@@ -440,7 +440,7 @@
         sunGlow.scale.set(1.05, 1.05, 1.05);
         scene.add(sunGlow);
 
-        // Luz solar
+        // Sun light
         const sunLight = new THREE.PointLight(0xffdd99, 4, 1000, 2);
         sunLight.position.set(0, 0, 0);
         sunLight.castShadow = true;
@@ -450,11 +450,11 @@
         sunLight.shadow.camera.far = 1000;
         scene.add(sunLight);
 
-        // Luz ambiental
+        // Ambient light
         const ambientLight = new THREE.AmbientLight(0x333333);
         scene.add(ambientLight);
 
-        // Escalas y distancias (valores reales escalados)
+        // Scales and distances (scaled real values)
         const planetScales = {
             mercury: 0.38,
             venus: 0.95,
@@ -477,7 +477,7 @@
             rhea: 0.20 * 3
         };
 
-        // Distancias proporcionales (1 unidad = 10 millones de km)
+        // Proportional distances (1 unit = 10 million km)
         const planetDistances = {
             mercury: 5.8 * 3.5,
             venus: 10.8 * 3.5,
@@ -489,479 +489,479 @@
             neptune: 449.5 * 3
         };
 
-        // Información educativa extendida con nuevas lunas
+        // Extended educational information with new moons
         const planetInfo = {
             mercury: {
-                name: "Mercurio",
-                type: "Planeta terrestre",
+                name: "Mercury",
+                type: "Terrestrial planet",
                 diameter: "4,880 km",
-                distance: "57.9 millones km",
-                orbitalPeriod: "88 días terrestres",
-                rotationPeriod: "58.6 días terrestres",
-                temperature: "-173°C a 427°C",
+                distance: "57.9 million km",
+                orbitalPeriod: "88 Earth days",
+                rotationPeriod: "58.6 Earth days",
+                temperature: "-173°C to 427°C",
                 moons: 0,
                 facts: [
-                    "Es el planeta más pequeño del sistema solar",
-                    "No tiene atmósfera significativa",
-                    "Tiene la mayor variación de temperatura entre día y noche"
+                    "It's the smallest planet in the solar system",
+                    "Has no significant atmosphere",
+                    "Has the greatest temperature variation between day and night"
                 ],
-                missions: ["Mariner 10 (1974-75)", "MESSENGER (2008-2015)", "BepiColombo (2018-presente)"],
-                composition: "70% metálico, 30% silicatos",
-                discovery: "Conocido desde la antigüedad",
+                missions: ["Mariner 10 (1974-75)", "MESSENGER (2008-2015)", "BepiColombo (2018-present)"],
+                composition: "70% metallic, 30% silicates",
+                discovery: "Known since antiquity",
                 orbitColor: 0xFFA500
             },
             venus: {
                 name: "Venus",
-                type: "Planeta terrestre",
+                type: "Terrestrial planet",
                 diameter: "12,104 km",
-                distance: "108.2 millones km",
-                orbitalPeriod: "225 días terrestres",
-                rotationPeriod: "243 días terrestres (retrógrado)",
-                temperature: "462°C (media)",
+                distance: "108.2 million km",
+                orbitalPeriod: "225 Earth days",
+                rotationPeriod: "243 Earth days (retrograde)",
+                temperature: "462°C (average)",
                 moons: 0,
                 facts: [
-                    "Gira en dirección opuesta a la mayoría de planetas",
-                    "Tiene un efecto invernadero descontrolado",
-                    "La presión en su superficie es 92 veces la de la Tierra"
+                    "Rotates in the opposite direction to most planets",
+                    "Has a runaway greenhouse effect",
+                    "Surface pressure is 92 times that of Earth"
                 ],
-                missions: ["Venera (URSS, 1961-1983)", "Magallanes (NASA, 1989-1994)", "Akatsuki (JAXA, 2010-presente)"],
+                missions: ["Venera (USSR, 1961-1983)", "Magellan (NASA, 1989-1994)", "Akatsuki (JAXA, 2010-present)"],
                 composition: "CO₂ (96.5%), N₂ (3.5%)",
-                discovery: "Conocido desde la antigüedad",
+                discovery: "Known since antiquity",
                 orbitColor: 0x996633
             },
             earth: {
-                name: "Tierra",
-                type: "Planeta terrestre",
+                name: "Earth",
+                type: "Terrestrial planet",
                 diameter: "12,742 km",
-                distance: "149.6 millones km",
-                orbitalPeriod: "365.25 días",
+                distance: "149.6 million km",
+                orbitalPeriod: "365.25 days",
                 rotationPeriod: "23h 56m 4s",
-                temperature: "-89°C a 58°C",
+                temperature: "-89°C to 58°C",
                 moons: 1,
                 facts: [
-                    "El único planeta conocido con vida",
-                    "71% de su superficie está cubierta de agua",
-                    "Tiene un campo magnético protector"
+                    "The only known planet with life",
+                    "71% of its surface is covered by water",
+                    "Has a protective magnetic field"
                 ],
-                missions: ["Todos los vuelos espaciales humanos"],
+                missions: ["All human spaceflights"],
                 composition: "N₂ (78%), O₂ (21%), Ar (1%)",
-                discovery: "Nuestro hogar",
+                discovery: "Our home",
                 orbitColor: 0x00FF00
             },
             mars: {
-                name: "Marte",
-                type: "Planeta terrestre",
+                name: "Mars",
+                type: "Terrestrial planet",
                 diameter: "6,779 km",
-                distance: "227.9 millones km",
-                orbitalPeriod: "687 días terrestres",
+                distance: "227.9 million km",
+                orbitalPeriod: "687 Earth days",
                 rotationPeriod: "24h 37m 22s",
-                temperature: "-140°C a 20°C",
+                temperature: "-140°C to 20°C",
                 moons: 2,
                 facts: [
-                    "Tiene el volcán más grande del sistema solar (Olympus Mons)",
-                    "Presenta estaciones como la Tierra",
-                    "Tuvo agua líquida en su superficie en el pasado"
+                    "Has the largest volcano in the solar system (Olympus Mons)",
+                    "Has seasons like Earth",
+                    "Had liquid water on its surface in the past"
                 ],
-                missions: ["Viking (1975)", "Opportunity (2003-2018)", "Perseverance (2020-presente)"],
+                missions: ["Viking (1975)", "Opportunity (2003-2018)", "Perseverance (2020-present)"],
                 composition: "CO₂ (95%), N₂ (3%), Ar (1.6%)",
-                discovery: "Conocido desde la antigüedad",
+                discovery: "Known since antiquity",
                 orbitColor: 0xFF0000
             },
             jupiter: {
-                name: "Júpiter",
-                type: "Gigante gaseoso",
+                name: "Jupiter",
+                type: "Gas giant",
                 diameter: "139,820 km",
-                distance: "778.5 millones km",
-                orbitalPeriod: "11.86 años terrestres",
+                distance: "778.5 million km",
+                orbitalPeriod: "11.86 Earth years",
                 rotationPeriod: "9h 55m 30s",
-                temperature: "-108°C (nubes)",
+                temperature: "-108°C (clouds)",
                 moons: 79,
                 facts: [
-                    "El planeta más grande del sistema solar",
-                    "Tiene una tormenta gigante (Gran Mancha Roja) que dura siglos",
-                    "Su campo magnético es 14 veces más fuerte que el de la Tierra"
+                    "The largest planet in the solar system",
+                    "Has a giant storm (Great Red Spot) that has lasted for centuries",
+                    "Its magnetic field is 14 times stronger than Earth's"
                 ],
-                missions: ["Pioneer 10/11", "Voyager 1/2", "Galileo (1995-2003)", "Juno (2016-presente)"],
+                missions: ["Pioneer 10/11", "Voyager 1/2", "Galileo (1995-2003)", "Juno (2016-present)"],
                 composition: "H₂ (90%), He (10%)",
-                discovery: "Conocido desde la antigüedad",
+                discovery: "Known since antiquity",
                 orbitColor: 0xDDA0DD
             },
             saturn: {
-                name: "Saturno",
-                type: "Gigante gaseoso",
+                name: "Saturn",
+                type: "Gas giant",
                 diameter: "116,460 km",
-                distance: "1,434 millones km",
-                orbitalPeriod: "29.46 años terrestres",
+                distance: "1,434 million km",
+                orbitalPeriod: "29.46 Earth years",
                 rotationPeriod: "10h 33m 38s",
-                temperature: "-139°C (nubes)",
+                temperature: "-139°C (clouds)",
                 moons: 82,
                 facts: [
-                    "Tiene el sistema de anillos más visible",
-                    "Es el único planeta menos denso que el agua",
-                    "Tiene una luna (Titán) con una atmósfera densa y lagos de hidrocarburos"
+                    "Has the most visible ring system",
+                    "It's the only planet less dense than water",
+                    "Has a moon (Titan) with a dense atmosphere and hydrocarbon lakes"
                 ],
                 missions: ["Pioneer 11", "Voyager 1/2", "Cassini-Huygens (1997-2017)"],
                 composition: "H₂ (96%), He (3%)",
-                discovery: "Conocido desde la antigüedad",
+                discovery: "Known since antiquity",
                 orbitColor: 0xFFFF00
             },
             uranus: {
-                name: "Urano",
-                type: "Gigante de hielo",
+                name: "Uranus",
+                type: "Ice giant",
                 diameter: "50,724 km",
-                distance: "2,871 millones km",
-                orbitalPeriod: "84.01 años terrestres",
-                rotationPeriod: "17h 14m 24s (retrógrado)",
-                temperature: "-197°C (nubes)",
+                distance: "2,871 million km",
+                orbitalPeriod: "84.01 Earth years",
+                rotationPeriod: "17h 14m 24s (retrograde)",
+                temperature: "-197°C (clouds)",
                 moons: 27,
                 facts: [
-                    "Gira sobre su lado con un ángulo de 98°",
-                    "Fue el primer planeta descubierto con telescopio",
-                    "Tiene anillos verticales muy tenues"
+                    "Rotates on its side with a 98° angle",
+                    "Was the first planet discovered with a telescope",
+                    "Has vertical rings that are very faint"
                 ],
                 missions: ["Voyager 2 (1986)"],
                 composition: "H₂ (83%), He (15%), CH₄ (2%)",
-                discovery: "William Herschel en 1781",
+                discovery: "William Herschel in 1781",
                 orbitColor: 0x00FFFF
             },
             neptune: {
-                name: "Neptuno",
-                type: "Gigante de hielo",
+                name: "Neptune",
+                type: "Ice giant",
                 diameter: "49,244 km",
-                distance: "4,495 millones km",
-                orbitalPeriod: "164.8 años terrestres",
+                distance: "4,495 million km",
+                orbitalPeriod: "164.8 Earth years",
                 rotationPeriod: "16h 6m 36s",
-                temperature: "-201°C (nubes)",
+                temperature: "-201°C (clouds)",
                 moons: 14,
                 facts: [
-                    "Tiene los vientos más fuertes del sistema solar (2,100 km/h)",
-                    "Fue descubierto mediante predicciones matemáticas",
-                    "Su luna Tritón orbita en dirección opuesta (retrógrada)"
+                    "Has the strongest winds in the solar system (2,100 km/h)",
+                    "Was discovered through mathematical predictions",
+                    "Its moon Triton orbits in the opposite direction (retrograde)"
                 ],
                 missions: ["Voyager 2 (1989)"],
                 composition: "H₂ (80%), He (19%), CH₄ (1%)",
-                discovery: "Johann Galle en 1846",
+                discovery: "Johann Galle in 1846",
                 orbitColor: 0x0000FF
             },
             moon: {
-                name: "Luna",
-                type: "Satélite natural",
+                name: "Moon",
+                type: "Natural satellite",
                 diameter: "3,474 km",
-                distance: "384,400 km de la Tierra",
-                orbitalPeriod: "27.3 días",
-                rotationPeriod: "27.3 días (rotación sincrónica)",
-                temperature: "-233°C a 123°C",
+                distance: "384,400 km from Earth",
+                orbitalPeriod: "27.3 days",
+                rotationPeriod: "27.3 days (synchronous rotation)",
+                temperature: "-233°C to 123°C",
                 facts: [
-                    "Es el quinto satélite más grande del sistema solar",
-                    "Influye en las mareas terrestres",
-                    "Las huellas humanas permanecerán millones de años por falta de atmósfera"
+                    "It's the fifth largest satellite in the solar system",
+                    "Influences Earth's tides",
+                    "Human footprints will remain for millions of years due to lack of atmosphere"
                 ],
-                missions: ["Programa Apollo (1969-1972)", "LRO (2009-presente)"],
-                composition: "Silicatos, minerales similares a la Tierra",
-                discovery: "Conocida desde la prehistoria",
+                missions: ["Apollo Program (1969-1972)", "LRO (2009-present)"],
+                composition: "Silicates, minerals similar to Earth",
+                discovery: "Known since prehistory",
                 orbitColor: 0xAAAAAA
             },
             phobos: { 
-                name: "Fobos", 
-                type: "Satélite natural",
+                name: "Phobos", 
+                type: "Natural satellite",
                 diameter: "22.2 km",
-                distance: "9,377 km de Marte",
-                orbitalPeriod: "7.66 horas",
+                distance: "9,377 km from Mars",
+                orbitalPeriod: "7.66 hours",
                 facts: [
-                    "Es la luna más cercana a su planeta en el sistema solar",
-                    "Se acerca a Marte 1.8 cm cada año",
-                    "Tiene un gran cráter llamado Stickney"
+                    "It's the closest moon to its planet in the solar system",
+                    "Approaches Mars by 1.8 cm each year",
+                    "Has a large crater called Stickney"
                 ],
-                missions: ["Viking 1 (1977)", "Mars Express (2004-presente)"],
-                composition: "Roca rica en carbono",
-                discovery: "Asaph Hall en 1877",
+                missions: ["Viking 1 (1977)", "Mars Express (2004-present)"],
+                composition: "Carbon-rich rock",
+                discovery: "Asaph Hall in 1877",
                 orbitColor: 0xCC6666
             },
             deimos: { 
                 name: "Deimos", 
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "12.4 km",
-                distance: "23,460 km de Marte",
-                orbitalPeriod: "30.35 horas",
+                distance: "23,460 km from Mars",
+                orbitalPeriod: "30.35 hours",
                 facts: [
-                    "Es la luna más pequeña conocida del sistema solar",
-                    "Tiene una forma muy irregular",
-                    "Su superficie es más lisa que la de Fobos"
+                    "It's the smallest known moon in the solar system",
+                    "Has a very irregular shape",
+                    "Its surface is smoother than Phobos'"
                 ],
-                missions: ["Viking 2 (1977)", "Mars Express (2004-presente)"],
-                composition: "Roca rica en carbono",
-                discovery: "Asaph Hall en 1877",
+                missions: ["Viking 2 (1977)", "Mars Express (2004-present)"],
+                composition: "Carbon-rich rock",
+                discovery: "Asaph Hall in 1877",
                 orbitColor: 0xCC9999
             },
             io: { 
                 name: "Io", 
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "3,643 km",
-                distance: "421,700 km de Júpiter",
-                orbitalPeriod: "1.77 días",
+                distance: "421,700 km from Jupiter",
+                orbitalPeriod: "1.77 days",
                 facts: [
-                    "El cuerpo más volcánicamente activo del sistema solar",
-                    "Tiene más de 400 volcanes activos",
-                    "Su superficie está cubierta de azufre"
+                    "The most volcanically active body in the solar system",
+                    "Has more than 400 active volcanoes",
+                    "Its surface is covered with sulfur"
                 ],
                 missions: ["Voyager 1 (1979)", "Galileo (1995-2003)"],
                 orbitColor: 0xFF4500 
             },
             europa: { 
                 name: "Europa", 
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "3,122 km",
-                distance: "671,100 km de Júpiter",
-                orbitalPeriod: "3.55 días",
+                distance: "671,100 km from Jupiter",
+                orbitalPeriod: "3.55 days",
                 facts: [
-                    "Tiene un océano subsuperficial de agua líquida",
-                    "Su superficie es de hielo muy liso",
-                    "Es uno de los principales candidatos para albergar vida extraterrestre"
+                    "Has a subsurface ocean of liquid water",
+                    "Its surface is very smooth ice",
+                    "One of the prime candidates for extraterrestrial life"
                 ],
-                missions: ["Voyager 2 (1979)", "Galileo (1995-2003)", "Europa Clipper (prevista 2024)"],
+                missions: ["Voyager 2 (1979)", "Galileo (1995-2003)", "Europa Clipper (planned 2024)"],
                 orbitColor: 0x87CEEB 
             },
             ganymede: { 
-                name: "Ganímedes", 
-                type: "Satélite natural",
+                name: "Ganymede", 
+                type: "Natural satellite",
                 diameter: "5,262 km",
-                distance: "1,070,400 km de Júpiter",
-                orbitalPeriod: "7.15 días",
+                distance: "1,070,400 km from Jupiter",
+                orbitalPeriod: "7.15 days",
                 facts: [
-                    "Es la luna más grande del sistema solar",
-                    "Tiene su propio campo magnético",
-                    "Contiene más agua que todos los océanos de la Tierra juntos"
+                    "It's the largest moon in the solar system",
+                    "Has its own magnetic field",
+                    "Contains more water than all of Earth's oceans combined"
                 ],
                 missions: ["Voyager 1 (1979)", "Galileo (1995-2003)"],
                 orbitColor: 0xDAA520 
             },
             callisto: { 
-                name: "Calisto", 
-                type: "Satélite natural",
+                name: "Callisto", 
+                type: "Natural satellite",
                 diameter: "4,821 km",
-                distance: "1,882,700 km de Júpiter",
-                orbitalPeriod: "16.69 días",
+                distance: "1,882,700 km from Jupiter",
+                orbitalPeriod: "16.69 days",
                 facts: [
-                    "Es la luna más craterizada del sistema solar",
-                    "Tiene una superficie muy antigua (4 mil millones de años)",
-                    "Posiblemente tiene un océano subterráneo"
+                    "The most cratered moon in the solar system",
+                    "Has a very ancient surface (4 billion years)",
+                    "Possibly has a subsurface ocean"
                 ],
                 missions: ["Voyager 1 (1979)", "Galileo (1995-2003)"],
                 orbitColor: 0x696969 
             },
             titan: {
-                name: "Titán",
-                type: "Satélite natural",
+                name: "Titan",
+                type: "Natural satellite",
                 diameter: "5,150 km",
-                distance: "1,221,850 km de Saturno",
-                orbitalPeriod: "15.95 días",
+                distance: "1,221,850 km from Saturn",
+                orbitalPeriod: "15.95 days",
                 facts: [
-                    "La única luna con una atmósfera densa",
-                    "Tiene lagos y ríos de metano líquido",
-                    "Es más grande que el planeta Mercurio"
+                    "The only moon with a dense atmosphere",
+                    "Has lakes and rivers of liquid methane",
+                    "Larger than the planet Mercury"
                 ],
                 missions: ["Voyager 1 (1980)", "Cassini-Huygens (2004-2017)"],
                 composition: "N₂ (98.4%), CH₄ (1.6%)",
-                discovery: "Christiaan Huygens en 1655",
+                discovery: "Christiaan Huygens in 1655",
                 orbitColor: 0xFFA07A
             },
             enceladus: {
-                name: "Encélado",
-                type: "Satélite natural",
+                name: "Enceladus",
+                type: "Natural satellite",
                 diameter: "504 km",
-                distance: "238,040 km de Saturno",
-                orbitalPeriod: "1.37 días",
+                distance: "238,040 km from Saturn",
+                orbitalPeriod: "1.37 days",
                 facts: [
-                    "Tiene géiseres que expulsan agua al espacio",
-                    "Tiene un océano global bajo su corteza helada",
-                    "Es uno de los objetos más reflectantes del sistema solar"
+                    "Has geysers that eject water into space",
+                    "Has a global ocean beneath its icy crust",
+                    "One of the most reflective objects in the solar system"
                 ],
                 missions: ["Voyager 2 (1981)", "Cassini (2005-2017)"],
-                composition: "Hielo de agua con núcleo rocoso",
-                discovery: "William Herschel en 1789",
+                composition: "Water ice with rocky core",
+                discovery: "William Herschel in 1789",
                 orbitColor: 0xADD8E6
             },
             mimas: {
                 name: "Mimas",
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "396 km",
-                distance: "185,540 km de Saturno",
-                orbitalPeriod: "0.94 días",
+                distance: "185,540 km from Saturn",
+                orbitalPeriod: "0.94 days",
                 facts: [
-                    "Tiene un cráter gigante que lo hace parecer la Estrella de la Muerte",
-                    "Es el objeto más pequeño conocido que tiene forma esférica por su propia gravedad",
-                    "Su superficie está cubierta de cráteres"
+                    "Has a giant crater that makes it look like the Death Star",
+                    "It's the smallest known object that is rounded by its own gravity",
+                    "Its surface is covered with craters"
                 ],
                 missions: ["Voyager 1 (1980)", "Cassini (2004-2017)"],
-                composition: "Principalmente hielo de agua",
-                discovery: "William Herschel en 1789",
+                composition: "Mostly water ice",
+                discovery: "William Herschel in 1789",
                 orbitColor: 0xD3D3D3
             },
             rhea: {
-                name: "Rea",
-                type: "Satélite natural",
+                name: "Rhea",
+                type: "Natural satellite",
                 diameter: "1,528 km",
-                distance: "527,070 km de Saturno",
-                orbitalPeriod: "4.52 días",
+                distance: "527,070 km from Saturn",
+                orbitalPeriod: "4.52 days",
                 facts: [
-                    "Es la segunda luna más grande de Saturno",
-                    "Tiene un sistema de tenues anillos (no confirmado)",
-                    "Su superficie está muy craterizada"
+                    "It's Saturn's second largest moon",
+                    "Has a faint ring system (unconfirmed)",
+                    "Its surface is heavily cratered"
                 ],
                 missions: ["Voyager 1 (1980)", "Cassini (2004-2017)"],
-                composition: "Hielo de agua con algo de roca",
-                discovery: "Giovanni Cassini en 1672",
+                composition: "Water ice with some rock",
+                discovery: "Giovanni Cassini in 1672",
                 orbitColor: 0x778899
             },
-            // Nuevas lunas de Saturno
+            // New Saturn moons
             iapetus: {
-                name: "Jápeto",
-                type: "Satélite natural",
+                name: "Iapetus",
+                type: "Natural satellite",
                 diameter: "1,469 km",
-                distance: "3,560,820 km de Saturno",
-                orbitalPeriod: "79.32 días",
+                distance: "3,560,820 km from Saturn",
+                orbitalPeriod: "79.32 days",
                 facts: [
-                    "Tiene dos hemisferios con colores muy diferentes: uno oscuro y uno brillante.",
-                    "Posee una cresta ecuatorial única que le da una apariencia de 'nuez'."
+                    "Has two hemispheres with very different colors: one dark and one bright.",
+                    "Has a unique equatorial ridge that gives it a 'walnut' appearance."
                 ],
                 missions: ["Voyager 1/2", "Cassini-Huygens"],
-                discovery: "Giovanni Domenico Cassini en 1671",
+                discovery: "Giovanni Domenico Cassini in 1671",
                 orbitColor: 0x9999AA
             },
             dione: {
                 name: "Dione",
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "1,123 km",
-                distance: "377,400 km de Saturno",
-                orbitalPeriod: "2.74 días",
+                distance: "377,400 km from Saturn",
+                orbitalPeriod: "2.74 days",
                 facts: [
-                    "Muestra un terreno con muchas fracturas y acantilados de hielo.",
-                    "Posiblemente tiene un océano subsuperficial."
+                    "Shows terrain with many fractures and ice cliffs.",
+                    "Possibly has a subsurface ocean."
                 ],
                 missions: ["Voyager 1/2", "Cassini-Huygens"],
-                discovery: "Giovanni Domenico Cassini en 1684",
+                discovery: "Giovanni Domenico Cassini in 1684",
                 orbitColor: 0xDDDDDD
             },
             tethys: {
-                name: "Tetis",
-                type: "Satélite natural",
+                name: "Tethys",
+                type: "Natural satellite",
                 diameter: "1,062 km",
-                distance: "294,660 km de Saturno",
-                orbitalPeriod: "1.88 días",
+                distance: "294,660 km from Saturn",
+                orbitalPeriod: "1.88 days",
                 facts: [
-                    "Tiene un cráter de impacto enorme llamado Odiseo, que cubre gran parte de su superficie.",
-                    "Presenta una gran falla que se extiende por casi las tres cuartas partes de su circunferencia."
+                    "Has a huge impact crater called Odysseus covering much of its surface.",
+                    "Features a large fault extending almost three-quarters of its circumference."
                 ],
                 missions: ["Voyager 1/2", "Cassini-Huygens"],
-                discovery: "Giovanni Domenico Cassini en 1684",
+                discovery: "Giovanni Domenico Cassini in 1684",
                 orbitColor: 0xBBBBBB
             },
-            // Lunas de Urano
+            // Uranus moons
             miranda: {
                 name: "Miranda",
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "471 km",
-                distance: "129,390 km de Urano",
-                orbitalPeriod: "1.41 días",
+                distance: "129,390 km from Uranus",
+                orbitalPeriod: "1.41 days",
                 facts: [
-                    "Tiene un terreno geológicamente variado con cañones y 'coronas' únicas.",
-                    "Se cree que su superficie fue remodelada por fuerzas de marea."
+                    "Has geologically varied terrain with canyons and unique 'coronae'.",
+                    "Its surface is believed to have been reshaped by tidal forces."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "Gerard Kuiper en 1948",
+                discovery: "Gerard Kuiper in 1948",
                 orbitColor: 0xAAAAAA
             },
             ariel: {
                 name: "Ariel",
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "1,158 km",
-                distance: "191,000 km de Urano",
-                orbitalPeriod: "2.52 días",
+                distance: "191,000 km from Uranus",
+                orbitalPeriod: "2.52 days",
                 facts: [
-                    "Su superficie está marcada por un sistema de valles y cañones, lo que sugiere actividad geológica pasada.",
-                    "Es la segunda luna más brillante de Urano."
+                    "Its surface is marked by a system of valleys and canyons, suggesting past geological activity.",
+                    "It's Uranus's second brightest moon."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "William Lassell en 1851",
+                discovery: "William Lassell in 1851",
                 orbitColor: 0xC0C0C0
             },
             umbriel: {
                 name: "Umbriel",
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "1,169 km",
-                distance: "266,000 km de Urano",
-                orbitalPeriod: "4.14 días",
+                distance: "266,000 km from Uranus",
+                orbitalPeriod: "4.14 days",
                 facts: [
-                    "Es una de las lunas más oscuras de Urano, con una superficie muy craterizada.",
-                    "Tiene una extraña característica brillante cerca de su ecuador, cuyo origen es desconocido."
+                    "One of Uranus's darkest moons, with a heavily cratered surface.",
+                    "Has a strange bright feature near its equator of unknown origin."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "William Lassell en 1851",
+                discovery: "William Lassell in 1851",
                 orbitColor: 0x888888
             },
             titania: {
                 name: "Titania",
-                type: "Satélite natural",
+                type: "Natural satellite",
                 diameter: "1,578 km",
-                distance: "436,300 km de Urano",
-                orbitalPeriod: "8.71 días",
+                distance: "436,300 km from Uranus",
+                orbitalPeriod: "8.71 days",
                 facts: [
-                    "Es la luna más grande de Urano y la octava más grande del sistema solar.",
-                    "Muestra evidencias de actividad geológica en el pasado, como fallas y cañones."
+                    "Uranus's largest moon and the eighth largest in the solar system.",
+                    "Shows evidence of past geological activity, such as faults and canyons."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "William Herschel en 1787",
+                discovery: "William Herschel in 1787",
                 orbitColor: 0xDDDDDD
             },
             oberon: {
-                name: "Oberón",
-                type: "Satélite natural",
+                name: "Oberon",
+                type: "Natural satellite",
                 diameter: "1,523 km",
-                distance: "583,500 km de Urano",
-                orbitalPeriod: "13.46 días",
+                distance: "583,500 km from Uranus",
+                orbitalPeriod: "13.46 days",
                 facts: [
-                    "Es la segunda luna más grande de Urano y está muy craterizada.",
-                    "Tiene una gran montaña en su superficie que se eleva unos 6 km."
+                    "Uranus's second largest moon and is heavily cratered.",
+                    "Has a large mountain on its surface rising about 6 km."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "William Herschel en 1787",
+                discovery: "William Herschel in 1787",
                 orbitColor: 0xAAAAAA
             },
-            // Lunas de Neptuno
+            // Neptune moons
             triton: {
-                name: "Tritón",
-                type: "Satélite natural",
+                name: "Triton",
+                type: "Natural satellite",
                 diameter: "2,706 km",
-                distance: "354,760 km de Neptuno",
-                orbitalPeriod: "5.88 días",
-                rotationPeriod: "5.88 días (sincrónica)",
+                distance: "354,760 km from Neptune",
+                orbitalPeriod: "5.88 days",
+                rotationPeriod: "5.88 days (synchronous)",
                 retrograde: true,
                 facts: [
-                    "Es la luna más grande de Neptuno y la única luna grande del sistema solar con una órbita retrógrada.",
-                    "Tiene criovulcanismo activo, expulsando nitrógeno líquido y polvo.",
-                    "Su superficie está cubierta de hielo de nitrógeno y metano."
+                    "Neptune's largest moon and the only large moon in the solar system with a retrograde orbit.",
+                    "Has active cryovolcanism, ejecting liquid nitrogen and dust.",
+                    "Its surface is covered with nitrogen and methane ice."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "William Lassell en 1846",
+                discovery: "William Lassell in 1846",
                 orbitColor: 0xCCEEFF
             },
             nereid: {
-                name: "Nereida",
-                type: "Satélite natural",
+                name: "Nereid",
+                type: "Natural satellite",
                 diameter: "340 km",
-                distance: "5,513,400 km de Neptuno",
-                orbitalPeriod: "360.13 días",
+                distance: "5,513,400 km from Neptune",
+                orbitalPeriod: "360.13 days",
                 facts: [
-                    "Tiene la órbita más excéntrica de cualquier luna conocida en el sistema solar.",
-                    "Su distancia a Neptuno varía enormemente, de 1.4 a 9.7 millones de km."
+                    "Has the most eccentric orbit of any known moon in the solar system.",
+                    "Its distance from Neptune varies greatly, from 1.4 to 9.7 million km."
                 ],
                 missions: ["Voyager 2"],
-                discovery: "Gerard Kuiper en 1949",
+                discovery: "Gerard Kuiper in 1949",
                 orbitColor: 0x9999BB
             }
         };
 
-        // Variables globales
+        // Global variables
         const planets = {};
         const orbits = [];
         let labelsVisible = true;
@@ -969,12 +969,11 @@
         let educationPanelVisible = false;
         let controlsPanelVisible = false;
         let selectedBody = null;
-        let cameraMode = 'free'; // 'free' o 'follow'
-        // let followDistance = 50; // No longer needed with OrbitControls
+        let cameraMode = 'free'; // 'free' or 'follow'
         const minFollowDistance = 5;
         const maxFollowDistance = 200;
 
-        // Función para crear etiquetas
+        // Function to create labels
         function createLabel(name) {
             const div = document.createElement('div');
             div.className = 'planet-label';
@@ -984,7 +983,7 @@
             return label;
         }
 
-        // Función para crear atmósfera con efecto de dispersión mejorado
+        // Function to create atmosphere with improved scattering effect
         function createAtmosphere(planet, radius, color) {
             const geometry = new THREE.SphereGeometry(radius * 1.05, 64, 64);
             const material = new THREE.ShaderMaterial({
@@ -1004,7 +1003,7 @@
                         vNormal = normalize(normalMatrix * normal);
                         intensity = pow(0.8 - dot(vNormal, normalize(viewVector)), 2.0);
                         
-                        // Pequeña animación para simular movimiento atmosférico
+                        // Small animation to simulate atmospheric movement
                         intensity *= 0.9 + sin(time * 0.5 + position.y * 2.0) * 0.1;
                     }
                 `,
@@ -1016,7 +1015,7 @@
                     void main() {
                         vec3 glow = glowColor * intensity;
                         
-                        // Efecto de dispersión más realista
+                        // More realistic scattering effect
                         float scatter = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
                         glow += glowColor * scatter * 0.3;
                         
@@ -1033,7 +1032,7 @@
             return atmosphere;
         }
 
-        // Función para crear planetas
+        // Function to create planets
         function createPlanet(options) {
             const {
                 name,
@@ -1059,12 +1058,12 @@
             planetGroup.userData.planetInfo = planetInfoData;
             scene.add(planetGroup);
 
-            // Grupo para la inclinación axial
+            // Group for axial tilt
             const planetAxisGroup = new THREE.Group();
             planetAxisGroup.rotation.z = tilt;
             planetGroup.add(planetAxisGroup);
 
-            // Geometría y material del planeta
+            // Planet geometry and material
             const geometry = new THREE.SphereGeometry(radius, 64, 64);
             const materialOptions = {
                 map: loadTexture(textureUrl),
@@ -1080,12 +1079,12 @@
             planet.receiveShadow = true;
             planetAxisGroup.add(planet);
             
-            // Atmósfera mejorada
+            // Improved atmosphere
             if (hasAtmosphere && atmosphereColor) {
                 planetGroup.userData.atmosphere = createAtmosphere(planetAxisGroup, radius, atmosphereColor);
             }
 
-            // Nubes (para la Tierra)
+            // Clouds (for Earth)
             let clouds = null;
             if (cloudsUrl) {
                 const cloudGeometry = new THREE.SphereGeometry(radius * 1.01, 64, 64);
@@ -1100,14 +1099,14 @@
                 planetAxisGroup.add(clouds);
             }
 
-            // Cara nocturna (para la Tierra)
+            // Night side (for Earth)
             if (nightUrl) {
                 material.emissiveMap = loadTexture(nightUrl);
                 material.emissive = new THREE.Color(0xffffff);
                 material.emissiveIntensity = 0.1;
             }
 
-            // Anillos (para Saturno)
+            // Rings (for Saturn)
             if (ring) {
                 const ringGeometry = new THREE.RingGeometry(ring.innerRadius, ring.outerRadius, 128);
                 const ringTexture = loadTexture(ring.textureUrl);
@@ -1133,7 +1132,7 @@
                 planetAxisGroup.add(ringMesh);
             }
 
-            // Órbita
+            // Orbit
             const orbitColor = planetInfoData.orbitColor || 0x555555;
             const orbitCurve = new THREE.EllipseCurve(0, 0, distance, distance, 0, Math.PI * 2, false);
             const orbitPoints = orbitCurve.getPoints(200);
@@ -1148,17 +1147,17 @@
             scene.add(orbit);
             orbits.push(orbit);
 
-            // Etiqueta
+            // Label
             const label = createLabel(planetInfoData.name); 
             planet.add(label);
             planet.userData.label = label;
             
-            // Referencias para actualización
+            // References for updating
             planetGroup.planetMesh = planet;
             planetGroup.planetAxisGroup = planetAxisGroup;
             planetGroup.clouds = clouds;
 
-            // Función de actualización para animación
+            // Update function for animation
             planetGroup.update = function(time) {
                 const orbitAngle = time * orbitSpeed * (retrograde ? -1 : 1);
                 this.position.x = Math.cos(orbitAngle) * distance;
@@ -1171,7 +1170,7 @@
                     this.clouds.rotation.y += rotationSpeed * 0.5;
                 }
                 
-                // Actualizar atmósfera si existe
+                // Update atmosphere if it exists
                 if (this.userData.atmosphere) {
                     this.userData.atmosphere.material.uniforms.time.value = time;
                 }
@@ -1180,7 +1179,7 @@
             return planetGroup;
         }
 
-        // Función para crear lunas
+        // Function to create moons
         function createMoon(options) {
             const {
                 name,
@@ -1206,7 +1205,7 @@
             moonAxisGroup.rotation.z = tilt;
             moonOrbitGroup.add(moonAxisGroup);
 
-            // Geometría y material de la luna
+            // Moon geometry and material
             const geometry = new THREE.SphereGeometry(radius, 64, 64);
             const material = new THREE.MeshPhongMaterial({
                 map: loadTexture(textureUrl),
@@ -1215,19 +1214,19 @@
                 shininess: 1
             });
 
-            // Malla de la luna
+            // Moon mesh
             const moon = new THREE.Mesh(geometry, material);
             moon.position.x = distance * 2;
             moon.castShadow = true;
             moon.receiveShadow = true;
             moonAxisGroup.add(moon);
 
-            // Atmósfera para lunas como Titán
+            // Atmosphere for moons like Titan
             if (hasAtmosphere && atmosphereColor) {
                 moonOrbitGroup.userData.atmosphere = createAtmosphere(moonAxisGroup, radius, atmosphereColor);
             }
 
-            // Órbita de la luna
+            // Moon orbit
             const orbitColor = moonInfoData.orbitColor || 0x666666; 
             const orbitCurve = new THREE.EllipseCurve(0, 0, distance * 2, distance * 2, 0, Math.PI * 2, false);
             const orbitPoints = orbitCurve.getPoints(100); 
@@ -1242,7 +1241,7 @@
             moonOrbitGroup.add(orbit);
             orbits.push(orbit);
 
-            // Etiqueta
+            // Label
             const label = createLabel(moonInfoData.name); 
             moon.add(label);
             moon.userData.label = label;
@@ -1250,14 +1249,14 @@
             moonOrbitGroup.moonMesh = moon;
             moonOrbitGroup.moonAxisGroup = moonAxisGroup;
 
-            // Función de actualización para animación
+            // Update function for animation
             moonOrbitGroup.update = function(time) {
                 const orbitAngle = time * orbitSpeed;
                 this.position.x = Math.cos(orbitAngle) * distance;
                 this.position.z = Math.sin(orbitAngle) * distance;
                 moonAxisGroup.rotation.y += rotationSpeed;
                 
-                // Actualizar atmósfera si existe
+                // Update atmosphere if it exists
                 if (this.userData.atmosphere) {
                     this.userData.atmosphere.material.uniforms.time.value = time;
                 }
@@ -1266,7 +1265,7 @@
             return moonOrbitGroup;
         }
 
-        // Creación de planetas y lunas 
+        // Create planets and moons 
         planets.mercury = createPlanet({
             name: 'mercury',
             radius: planetScales.mercury,
@@ -1330,7 +1329,7 @@
             atmosphereColor: 0xff6633
         });
 
-        // Lunas de Marte
+        // Mars moons
         planets.phobos = createMoon({
             name: 'phobos',
             radius: planetScales.phobos,
@@ -1422,7 +1421,7 @@
             atmosphereColor: 0xddddbb
         });
 
-        // Lunas de Saturno
+        // Saturn moons
         planets.titan = createMoon({
             name: 'titan',
             radius: planetScales.titan,
@@ -1466,7 +1465,7 @@
         planets.iapetus = createMoon({
             name: 'iapetus',
             radius: planetScales.iapetus,
-            distance: 30, // distancia escalada
+            distance: 30, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_iapetus.jpg',
             parentPlanet: planets.saturn,
             orbitSpeed: 0.001,
@@ -1475,7 +1474,7 @@
         planets.dione = createMoon({
             name: 'dione',
             radius: planetScales.dione,
-            distance: 9, // distancia escalada
+            distance: 9, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_dione.jpg',
             parentPlanet: planets.saturn,
             orbitSpeed: 0.009,
@@ -1484,7 +1483,7 @@
         planets.tethys = createMoon({
             name: 'tethys',
             radius: planetScales.tethys,
-            distance: 7, // distancia escalada
+            distance: 7, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_tethys.jpg',
             parentPlanet: planets.saturn,
             orbitSpeed: 0.011,
@@ -1503,11 +1502,11 @@
             atmosphereColor: 0x99ccff
         });
 
-        // Lunas de Urano
+        // Uranus moons
         planets.miranda = createMoon({
             name: 'miranda',
             radius: planetScales.miranda,
-            distance: 7, // distancia escalada
+            distance: 7, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_miranda.jpg',
             parentPlanet: planets.uranus,
             orbitSpeed: 0.01,
@@ -1516,7 +1515,7 @@
         planets.ariel = createMoon({
             name: 'ariel',
             radius: planetScales.ariel,
-            distance: 9, // distancia escalada
+            distance: 9, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_ariel.jpg',
             parentPlanet: planets.uranus,
             orbitSpeed: 0.008,
@@ -1525,7 +1524,7 @@
         planets.umbriel = createMoon({
             name: 'umbriel',
             radius: planetScales.umbriel,
-            distance: 12, // distancia escalada
+            distance: 12, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_umbriel.jpg',
             parentPlanet: planets.uranus,
             orbitSpeed: 0.006,
@@ -1534,7 +1533,7 @@
         planets.titania = createMoon({
             name: 'titania',
             radius: planetScales.titania,
-            distance: 18, // distancia escalada
+            distance: 18, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_titania.jpg',
             parentPlanet: planets.uranus,
             orbitSpeed: 0.004,
@@ -1543,7 +1542,7 @@
         planets.oberon = createMoon({
             name: 'oberon',
             radius: planetScales.oberon,
-            distance: 25, // distancia escalada
+            distance: 25, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_oberon.jpg',
             parentPlanet: planets.uranus,
             orbitSpeed: 0.003,
@@ -1562,29 +1561,29 @@
             atmosphereColor: 0x3366ff
         });
 
-        // Lunas de Neptuno
+        // Neptune moons
         planets.triton = createMoon({
             name: 'triton',
             radius: planetScales.triton,
-            distance: 10, // distancia escalada
+            distance: 10, // scaled distance
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_triton.jpg',
             parentPlanet: planets.neptune,
             orbitSpeed: 0.008,
             rotationSpeed: 0.008,
             retrograde: true,
-            tilt: 157.35 * Math.PI / 180 // Inclinación axial de Tritón
+            tilt: 157.35 * Math.PI / 180 // Triton's axial tilt
         });
         planets.nereid = createMoon({
             name: 'nereid',
             radius: planetScales.nereid,
-            distance: 30, // distancia escalada, Nereida tiene una órbita muy excéntrica
+            distance: 30, // scaled distance, Nereid has a very eccentric orbit
             textureUrl: 'https://raw.githubusercontent.com/ravendano014/solarium/refs/heads/main/2k_nereid.jpg', // Placeholder, use a generic moon texture if specific not available
             parentPlanet: planets.neptune,
-            orbitSpeed: 0.0005, // Menor velocidad por su órbita lejana
+            orbitSpeed: 0.0005, // Lower speed due to its distant orbit
             rotationSpeed: 0.005
         });
 
-        // Sistema de selección de planetas
+        // Planet selection system
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
 
@@ -1605,11 +1604,11 @@
                 if (obj.userData.planetInfo) { // For planets and moons
                     showPlanetInfo(obj.userData.planetInfo);
                     
-                    // Seleccionar el cuerpo para seguimiento
+                    // Select the body for following
                     selectedBody = obj;
                     cameraMode = 'follow';
                     
-                    // Ajustar distancia inicial basada en el tamaño del cuerpo
+                    // Set initial distance based on body size
                     let targetRadius;
                     if (obj.planetMesh) {
                         targetRadius = obj.planetMesh.geometry.parameters.radius;
@@ -1636,22 +1635,22 @@
                     updateCameraStatus();
                 } else if (obj === sunMesh) { // For the Sun
                     showPlanetInfo({
-                        name: "Sol",
-                        type: "Estrella",
+                        name: "Sun",
+                        type: "Star",
                         diameter: "1,392,000 km",
                         distance: "0 km",
                         orbitalPeriod: "N/A",
-                        rotationPeriod: "25-35 días terrestres",
-                        temperature: "5,500°C (superficie)",
+                        rotationPeriod: "25-35 Earth days",
+                        temperature: "5,500°C (surface)",
                         moons: "N/A",
                         facts: [
-                            "Es el centro de nuestro Sistema Solar.",
-                            "Compuesto principalmente de hidrógeno y helio.",
-                            "Su energía proviene de la fusión nuclear."
+                            "It's the center of our Solar System.",
+                            "Composed mainly of hydrogen and helium.",
+                            "Its energy comes from nuclear fusion."
                         ],
-                        missions: ["Parker Solar Probe (2018-presente)", "Solar Orbiter (2020-presente)"],
-                        composition: "Hidrógeno (73%), Helio (25%)",
-                        discovery: "Conocido desde la antigüedad"
+                        missions: ["Parker Solar Probe (2018-present)", "Solar Orbiter (2020-present)"],
+                        composition: "Hydrogen (73%), Helium (25%)",
+                        discovery: "Known since antiquity"
                     });
                     selectedBody = obj;
                     cameraMode = 'follow';
@@ -1674,7 +1673,7 @@
 
         window.addEventListener('click', onMouseClick, false);
 
-        // Mostrar información del planeta
+        // Show planet information
         function showPlanetInfo(info) {
             const infoPanel = document.getElementById('infoPanel');
             const planetName = document.getElementById('planetName');
@@ -1683,25 +1682,25 @@
             planetName.textContent = info.name;
             
             let contentHTML = `
-                <p><strong>Tipo:</strong> ${info.type || 'N/A'}</p>
-                <p><strong>Diámetro:</strong> ${info.diameter || 'N/A'}</p>
-                <p><strong>Distancia al Sol:</strong> ${info.distance || 'N/A'}</p>
-                <p><strong>Periodo orbital:</strong> ${info.orbitalPeriod || 'N/A'}</p>
-                <p><strong>Periodo de rotación:</strong> ${info.rotationPeriod || 'N/A'}</p>
-                <p><strong>Temperatura:</strong> ${info.temperature || 'N/A'}</p>
-                <p><strong>Lunas:</strong> ${info.moons !== undefined ? info.moons : 'N/A'}</p>
+                <p><strong>Type:</strong> ${info.type || 'N/A'}</p>
+                <p><strong>Diameter:</strong> ${info.diameter || 'N/A'}</p>
+                <p><strong>Distance from Sun:</strong> ${info.distance || 'N/A'}</p>
+                <p><strong>Orbital period:</strong> ${info.orbitalPeriod || 'N/A'}</p>
+                <p><strong>Rotation period:</strong> ${info.rotationPeriod || 'N/A'}</p>
+                <p><strong>Temperature:</strong> ${info.temperature || 'N/A'}</p>
+                <p><strong>Moons:</strong> ${info.moons !== undefined ? info.moons : 'N/A'}</p>
                 
-                ${info.composition ? `<div class="fact-box"><strong>Composición:</strong> ${info.composition}</div>` : ''}
+                ${info.composition ? `<div class="fact-box"><strong>Composition:</strong> ${info.composition}</div>` : ''}
                 
                 ${info.facts && info.facts.length > 0 ? `
-                    <h4>Datos interesantes:</h4>
+                    <h4>Interesting facts:</h4>
                     <ul style="padding-left: 20px; margin-top: 5px;">
                         ${info.facts.map(fact => `<li>${fact}</li>`).join('')}
                     </ul>
                 ` : ''}
                 
                 ${info.missions && info.missions.length > 0 ? `
-                    <h4>Misiones importantes:</h4>
+                    <h4>Important missions:</h4>
                     <ul style="padding-left: 20px; margin-top: 5px;">
                         ${info.missions.map(mission => `<li>${mission}</li>`).join('')}
                     </ul>
@@ -1710,19 +1709,19 @@
                 <p><em>${info.discovery || 'N/A'}</em></p>
             `;
             
-            // Actualizar panel de comparaciones
+            // Update comparison panel
             updateComparisonPanel(info);
             
             planetContent.innerHTML = contentHTML;
             infoPanel.style.display = 'block';
         }
 
-        // Actualizar panel de comparaciones
+        // Update comparison panel
         function updateComparisonPanel(planetInfo) {
             const comparisonsTab = document.getElementById('comparisons');
             
-            // Solo mostrar comparaciones para planetas (no lunas o Sol)
-            if (planetInfo.type && planetInfo.type.includes("Planeta")) {
+            // Only show comparisons for planets (not moons or Sun)
+            if (planetInfo.type && planetInfo.type.includes("Planet")) {
                 const earthDiameter = 12742;
                 const planetDiameter = parseFloat(planetInfo.diameter.replace(/[^\d.]/g, ''));
                 const diameterRatio = (planetDiameter / earthDiameter).toFixed(2);
@@ -1732,11 +1731,11 @@
                 const distanceRatio = (planetDistance / earthDistance).toFixed(2);
                 
                 comparisonsTab.innerHTML = `
-                    <h4>Comparado con la Tierra:</h4>
+                    <h4>Compared to Earth:</h4>
                     
                     <div class="comparison-container">
                         <div class="comparison-item">
-                            <div>Diámetro</div>
+                            <div>Diameter</div>
                             <div class="comparison-bar" style="width: ${Math.min(diameterRatio * 100, 100)}%"></div>
                             <div>${diameterRatio}x</div>
                         </div>
@@ -1744,24 +1743,24 @@
                     
                     <div class="comparison-container">
                         <div class="comparison-item">
-                            <div>Distancia al Sol</div>
+                            <div>Distance from Sun</div>
                             <div class="comparison-bar" style="width: ${Math.min(distanceRatio * 20, 100)}%"></div>
                             <div>${distanceRatio}x</div>
                         </div>
                     </div>
                     
                     <div class="fact-box">
-                        <strong>Gravedad superficial:</strong> 
+                        <strong>Surface gravity:</strong> 
                         ${calculateSurfaceGravity(planetInfo.name.toLowerCase(), planetDiameter).toFixed(2)} g
                         (${(calculateSurfaceGravity(planetInfo.name.toLowerCase(), planetDiameter) * 9.8).toFixed(2)} m/s²)
                     </div>
                 `;
             } else {
-                comparisonsTab.innerHTML = `<p>Selecciona un planeta para ver comparaciones con la Tierra</p>`;
+                comparisonsTab.innerHTML = `<p>Select a planet to see comparisons with Earth</p>`;
             }
         }
 
-        // Calcular gravedad superficial (simplificado)
+        // Calculate surface gravity (simplified)
         function calculateSurfaceGravity(planetName, diameterKm) {
             const masses = {
                 mercury: 0.055,
@@ -1791,19 +1790,19 @@
             return (masses[planetName] || 1) / (radius * radius); // Default to 1 if mass not found
         }
 
-        // Cerrar panel de información
+        // Close info panel
         document.querySelector('#infoPanel .close-btn').addEventListener('click', function() {
             document.getElementById('infoPanel').style.display = 'none';
         });
 
-        // Controles de simulación
+        // Simulation controls
         let simulationSpeed = 1;
         let isPaused = false;
         let simulatedDays = 0;
 
         document.getElementById('pauseBtn').addEventListener('click', function() {
             isPaused = !isPaused;
-            this.textContent = isPaused ? "Reanudar" : "Pausa";
+            this.textContent = isPaused ? "Resume" : "Pause";
             this.classList.toggle('active', isPaused);
         });
 
@@ -1842,19 +1841,19 @@
             button.classList.add('active');
         }
 
-        // Mostrar/ocultar órbitas
+        // Show/hide orbits
         document.getElementById('toggleOrbits').addEventListener('click', function() {
             orbitsVisible = !orbitsVisible;
-            this.textContent = orbitsVisible ? "Ocultar órbitas" : "Mostrar órbitas";
+            this.textContent = orbitsVisible ? "Hide orbits" : "Show orbits";
             this.classList.toggle('active', !orbitsVisible);
             
             orbits.forEach(orbit => {
                 orbit.material.opacity = orbitsVisible ? 0.4 : 0; 
                 orbit.material.needsUpdate = true;
             });
-            // Asegurarse de que las lunas también se ajusten
+            // Make sure moons are also adjusted
             Object.values(planets).forEach(body => {
-                if (body.userData.planetInfo.type && body.userData.planetInfo.type.includes("Satélite")) {
+                if (body.userData.planetInfo.type && body.userData.planetInfo.type.includes("Satellite")) {
                     
                     body.children.forEach(child => { 
                         if (child instanceof THREE.Line) { 
@@ -1866,7 +1865,7 @@
             });
         });
 
-        // Función para manejar la visibilidad de las etiquetas
+        // Function to handle label visibility
         function toggleLabelsVisibility() {
             // Toggle Sun label
             if (sunMesh.userData.label) {
@@ -1886,19 +1885,19 @@
                     meshWithLabel.userData.label.element.style.display = labelsVisible ? 'block' : 'none';
                 }
             });
-            // Actualizar el botón de la UI
+            // Update UI button
             const btn = document.getElementById('toggleLabels');
-            btn.textContent = labelsVisible ? "Ocultar nombres" : "Mostrar nombres";
+            btn.textContent = labelsVisible ? "Hide names" : "Show names";
             btn.classList.toggle('active', !labelsVisible);
         }
 
-        // Mostrar/ocultar etiquetas
+        // Show/hide labels
         document.getElementById('toggleLabels').addEventListener('click', function() {
             labelsVisible = !labelsVisible;
             toggleLabelsVisibility();
         });
 
-        // Botón para alternar modo seguimiento
+        // Button to toggle follow mode
         document.getElementById('toggleFollow').addEventListener('click', function() {
             if (selectedBody) {
                 cameraMode = cameraMode === 'free' ? 'follow' : 'free';
@@ -1912,18 +1911,18 @@
             }
         });
 
-        // Pestañas del panel educativo
+        // Education panel tabs
         document.querySelectorAll('.tab-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const tabId = this.getAttribute('data-tab');
                 
-                // Actualizar botones activos
+                // Update active buttons
                 document.querySelectorAll('.tab-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 this.classList.add('active');
                 
-                // Actualizar contenido visible
+                // Update visible content
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
@@ -1931,29 +1930,29 @@
             });
         });
 
-        // Actualizar estado de la cámara en la UI
+        // Update camera status in UI
         function updateCameraStatus() {
             const cameraStatus = document.getElementById('cameraStatus');
             if (cameraMode === 'follow' && selectedBody) {
                 let selectedName = "";
                 if (selectedBody === sunMesh) {
-                    selectedName = "Sol";
+                    selectedName = "Sun";
                 } else if (selectedBody.userData.planetInfo) {
                     selectedName = selectedBody.userData.planetInfo.name;
                 }
-                cameraStatus.textContent = `Modo: Seguir • Selección: ${selectedName}`;
+                cameraStatus.textContent = `Mode: Follow • Selection: ${selectedName}`;
                 cameraStatus.style.display = 'block';
-                document.getElementById('toggleFollow').textContent = "Modo Libre (F)";
+                document.getElementById('toggleFollow').textContent = "Free Mode (F)";
                 document.getElementById('toggleFollow').classList.add('active');
             } else {
-                cameraStatus.textContent = `Modo: Libre • Selección: Ninguna`;
+                cameraStatus.textContent = `Mode: Free • Selection: None`;
                 cameraStatus.style.display = 'block';
-                document.getElementById('toggleFollow').textContent = "Modo Seguir (F)";
+                document.getElementById('toggleFollow').textContent = "Follow Mode (F)";
                 document.getElementById('toggleFollow').classList.remove('active');
             }
         }
 
-        // Controles de teclado
+        // Keyboard controls
         function handleKeyDown(event) {
             switch(event.key.toLowerCase()) {
                 case 'm':
@@ -1982,7 +1981,7 @@
                     break;
                 
                 case 'f':
-                    // Alternar modo de cámara
+                    // Toggle camera mode
                     if (selectedBody) {
                         cameraMode = cameraMode === 'free' ? 'follow' : 'free';
                         if (cameraMode === 'free') {
@@ -2019,7 +2018,7 @@
                     break;
                 
                 case 'escape':
-                    // Salir del modo de seguimiento
+                    // Exit follow mode
                     cameraMode = 'free';
                     selectedBody = null; // Deselect body
                     // Reset controls target to origin and default zoom limits
@@ -2032,7 +2031,7 @@
             }
         }
 
-        // Manejar zoom de la rueda del ratón - No longer needed, OrbitControls handles it
+        // Handle mouse wheel zoom - No longer needed, OrbitControls handles it
         // function handleMouseWheel(event) {
         //     if (cameraMode === 'follow' && selectedBody) {
         //         followDistance -= event.deltaY * 0.05;
@@ -2041,7 +2040,7 @@
         // }
         // window.addEventListener('wheel', handleMouseWheel);
 
-        // Función para actualizar la posición de la cámara en modo seguimiento
+        // Function to update camera position in follow mode
         // This function is no longer needed since OrbitControls handles the camera movement and rotation
         // in follow mode. We only need to update controls.target.
         function updateCameraTargetInFollowMode() {
@@ -2059,7 +2058,7 @@
             }
         }
 
-        // Animación
+        // Animation
         let time = 0;
         let lastTime = Date.now();
 
@@ -2075,12 +2074,12 @@
                 simulatedDays += (delta * simulationSpeed) / 1000;
                 
                 document.getElementById('timeDisplay').textContent = 
-                    `Tiempo simulado: ${Math.floor(simulatedDays)} días`;
+                    `Simulated time: ${Math.floor(simulatedDays)} days`;
                 
-                // Actualizar uniformes del sol
+                // Update sun uniforms
                 sunMaterial.uniforms.time.value = time;
                 
-                // Rotación solar
+                // Solar rotation
                 sunMesh.rotation.y += 0.001 * simulationSpeed;
                 sunGlow.rotation.y += 0.0005 * simulationSpeed;
                 
@@ -2093,7 +2092,7 @@
                     sunMesh.userData.atmosphere.material.uniforms.time.value = time;
                 }
                 
-                // Actualizar planetas y lunas
+                // Update planets and moons
                 Object.values(planets).forEach(body => {
                     if (body.update) body.update(time);
                     // Update atmosphere materials view vector for planets/moons
@@ -2103,7 +2102,7 @@
                 });
             }
             
-            // Actualizar el objetivo de la cámara en modo seguimiento
+            // Update camera target in follow mode
             updateCameraTargetInFollowMode();
             
             // controls.enabled is now always true, but its target changes
@@ -2112,7 +2111,7 @@
             labelRenderer.render(scene, camera);
         }
 
-        // Redimensionamiento
+        // Resize handling
         window.addEventListener('resize', function() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -2120,13 +2119,13 @@
             labelRenderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Agregar event listener para teclado
+        // Add keyboard event listener
         window.addEventListener('keydown', handleKeyDown);
 
         // Initial setup for labels visibility
         toggleLabelsVisibility();
 
-        // Iniciar animación
+        // Start animation
         animate();
     </script>
 </body>
