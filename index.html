@@ -289,15 +289,18 @@
         <button class="close-btn">×</button>
         <h3>Keyboard Controls</h3>
         <ul style="padding-left: 20px;">
-            <li><strong>M</strong>: Show/hide education panel</li>
-            <li><strong>N</strong>: Show/hide names</li>
-            <li><strong>O</strong>: Show/hide orbits</li>
-            <li><strong>C</strong>: Show/hide controls</li>
-            <li><strong>H</strong>: Show/hide this help</li>
-            <li><strong>Click planet/moon</strong>: Select to follow</li>
-            <li><strong>F</strong>: Toggle free/follow camera mode</li>
-            <li><strong>Mouse wheel</strong>: Zoom in/out in follow mode</li>
-            <li><strong>ESC</strong>: Exit follow mode</li>
+            <ul style="padding-left: 20px;">
+                <li><strong>M</strong>: Show/hide education panel</li>
+                <li><strong>N</strong>: Show/hide names</li>
+                <li><strong>O</strong>: Show/hide orbits</li>
+                <li><strong>C</strong>: Show/hide controls</li>
+                <li><strong>H</strong>: Show/hide this help</li>
+                <li><strong>P</strong>: Pause/resume simulation</li>
+                <li><strong>Click planet/moon</strong>: Select to follow</li>
+                <li><strong>F</strong>: Toggle free/follow camera mode</li>
+                <li><strong>Mouse wheel</strong>: Zoom in/out in follow mode</li>
+                <li><strong>ESC</strong>: Exit follow mode</li>
+            </ul>
         </ul>
     </div>
     
@@ -993,7 +996,7 @@
                 orbitColor: 0x9999BB
             },
             asteroidbelt: {
-                name: "Asteroid Belt",
+                name: "",
                 type: "Region",
                 diameter: "N/A (region)",
                 distance: "2.2-3.2 AU (Astronomical Units)",
@@ -2292,7 +2295,11 @@
                         updateCameraStatus();
                     }
                     break;
-                
+                case 'p':
+                    isPaused = !isPaused;
+                    document.getElementById('pauseBtn').textContent = isPaused ? "Resume" : "Pause";
+                    document.getElementById('pauseBtn').classList.toggle('active', isPaused);
+                    break;
                 case 'escape':
                     // Exit follow mode
                     cameraMode = 'free';
