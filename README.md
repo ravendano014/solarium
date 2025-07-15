@@ -6,6 +6,8 @@
 
 This project is an interactive 3D simulation of our solar system, built using HTML, CSS, and JavaScript with the Three.js library. It provides an engaging and educational experience, allowing users to explore planets, moons, asteroids, and comets, view their properties, and control the simulation.
 
+(Demo_Solarium.jpg)
+
 ## Features
 
 - **3D Solar System Visualization:** Realistic models and textures for the Sun, planets, and major moons.
