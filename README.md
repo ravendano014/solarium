@@ -1,6 +1,6 @@
 # Interactive Educational Solar System
 
-**Functional Demo ** [Solarium](https://ravendano014.github.io/solarium/) 
+**Functional Demo** [Solarium](https://ravendano014.github.io/solarium/) 
 
 **Spanish version:** [Solarium](https://ravendano014.github.io/solarium/solar.html)
 
