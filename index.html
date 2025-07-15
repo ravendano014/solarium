@@ -991,12 +991,61 @@
                 missions: ["Voyager 2"],
                 discovery: "Gerard Kuiper in 1949",
                 orbitColor: 0x9999BB
+            },
+            asteroidbelt: {
+                name: "Asteroid Belt",
+                type: "Region",
+                diameter: "N/A (region)",
+                distance: "2.2-3.2 AU (Astronomical Units)",
+                orbitalPeriod: "3-6 Earth years (typical asteroid)",
+                facts: [
+                    "Located between Mars and Jupiter",
+                    "Contains millions of asteroids, but their combined mass is less than Earth's Moon",
+                    "Ceres is the largest object in the asteroid belt and is classified as a dwarf planet"
+                ],
+                missions: ["Dawn (Ceres, Vesta)", "Galileo", "NEAR Shoemaker"],
+                composition: "Rocky and metallic asteroids",
+                discovery: "Giuseppe Piazzi (Ceres, 1801)",
+                orbitColor: 0x8B4513 // SaddleBrown
+            },
+            halley: {
+                name: "Halley's Comet",
+                type: "Comet",
+                diameter: "~15 km (nucleus)",
+                distance: "0.59 AU (perihelion) to 35 AU (aphelion)",
+                orbitalPeriod: "75-76 Earth years",
+                facts: [
+                    "One of the best-known short-period comets",
+                    "Visible to the naked eye from Earth every 75–76 years",
+                    "Its last appearance was in 1986, and its next will be in 2061"
+                ],
+                missions: ["Giotto (ESA)", "Vega 1 & 2 (USSR)"],
+                composition: "Ice, dust, rocky particles",
+                discovery: "Edmond Halley (recognized periodic nature)",
+                orbitColor: 0xFFFFFF // White
+            },
+            halebopp: {
+                name: "Comet Hale-Bopp",
+                type: "Comet",
+                diameter: "~60 km (nucleus)",
+                distance: "0.91 AU (perihelion) to ~370 AU (aphelion)",
+                orbitalPeriod: "~2,533 Earth years",
+                facts: [
+                    "One of the brightest comets seen in the 20th century",
+                    "Visible to the naked eye for a record 18 months",
+                    "Discovered independently by Alan Hale and Thomas Bopp"
+                ],
+                missions: ["N/A"],
+                composition: "Ice, dust, rocky particles",
+                discovery: "Alan Hale & Thomas Bopp in 1995",
+                orbitColor: 0xADD8E6 // LightBlue
             }
         };
 
         // Global variables
         const planets = {};
         const orbits = [];
+        const comets = []; // Array to store comets for animation
         let labelsVisible = true;
         let orbitsVisible = true;
         let educationPanelVisible = false;
@@ -1297,6 +1346,160 @@
 
             return moonOrbitGroup;
         }
+
+        // Function to create Asteroid Belt
+        function createAsteroidBelt(minDistance, maxDistance, numAsteroids, sizeRange) {
+            const asteroidBeltGroup = new THREE.Group();
+            asteroidBeltGroup.userData.planetInfo = planetInfo.asteroidbelt; // Assign info
+            scene.add(asteroidBeltGroup);
+
+            const material = new THREE.MeshPhongMaterial({ color: 0x808080 }); // Grey color for asteroids
+
+            for (let i = 0; i < numAsteroids; i++) {
+                const size = THREE.MathUtils.randFloat(sizeRange[0], sizeRange[1]);
+                const geometry = new THREE.SphereGeometry(size, 8, 8); // Simple sphere geometry
+                const asteroid = new THREE.Mesh(geometry, material);
+
+                // Random position within the belt
+                const distance = THREE.MathUtils.randFloat(minDistance, maxDistance);
+                const angle = Math.random() * Math.PI * 2;
+                const yOffset = THREE.MathUtils.randFloat(-2, 2); // Slight deviation from the plane
+
+                asteroid.position.set(
+                    Math.cos(angle) * distance,
+                    yOffset,
+                    Math.sin(angle) * distance
+                );
+
+                asteroid.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+
+                asteroid.userData.rotationSpeed = THREE.MathUtils.randFloat(0.001, 0.005);
+                asteroid.userData.orbitSpeed = THREE.MathUtils.randFloat(0.0001, 0.0005); // Slower orbit
+                asteroid.userData.distance = distance;
+                asteroid.userData.initialAngle = angle;
+
+                asteroidBeltGroup.add(asteroid);
+            }
+
+            // Asteroid belt does not have a single orbit line, so no orbit object added to 'orbits' array
+            
+            // Label for the asteroid belt
+            const label = createLabel(planetInfo.asteroidbelt.name);
+            asteroidBeltGroup.add(label);
+            asteroidBeltGroup.userData.label = label; // Store reference to the label
+
+            asteroidBeltGroup.update = function(time) {
+                this.children.forEach(asteroid => {
+                    if (asteroid.isMesh) { // Only update meshes
+                        asteroid.rotation.x += asteroid.userData.rotationSpeed / 2;
+                        asteroid.rotation.y += asteroid.userData.rotationSpeed;
+                        asteroid.rotation.z += asteroid.userData.rotationSpeed / 3;
+
+                        const orbitAngle = asteroid.userData.initialAngle + time * asteroid.userData.orbitSpeed;
+                        asteroid.position.x = Math.cos(orbitAngle) * asteroid.userData.distance;
+                        asteroid.position.z = Math.sin(orbitAngle) * asteroid.userData.distance;
+                    }
+                });
+            };
+            return asteroidBeltGroup;
+        }
+
+        // Function to create Comets
+        function createComet(options) {
+            const { name, perihelion, aphelion, orbitalPeriod, tilt, orbitDirection = 1 } = options;
+            const cometInfoData = planetInfo[name.toLowerCase()] || { name: name };
+
+            const cometGroup = new THREE.Group();
+            cometGroup.userData.planetInfo = cometInfoData;
+            scene.add(cometGroup);
+
+            // Nucleus (small sphere)
+            const nucleusGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+            const nucleusMaterial = new THREE.MeshPhongMaterial({ color: 0xAAAAAA });
+            const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+            nucleus.castShadow = true;
+            cometGroup.add(nucleus);
+
+            // Tail (using a trail-like effect or simple cone for visual representation)
+            const tailGeometry = new THREE.ConeGeometry(0.8, 5, 16, 1, true); // base radius, height, radial segments, height segments, open ended
+            tailGeometry.translate(0, 2.5, 0); // Move cone to be behind the nucleus
+            const tailMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xADD8E6, // Light Blue
+                transparent: true, 
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+            tail.rotation.x = Math.PI / 2; // Point tail away from the sun
+            nucleus.add(tail); // Tail follows the nucleus
+
+            // Orbit (highly eccentric ellipse)
+            // Need to calculate semi-major axis (a) and eccentricity (e) from perihelion and aphelion
+            const a = (perihelion + aphelion) / 2; // Semi-major axis
+            const e = (aphelion - perihelion) / (aphelion + perihelion); // Eccentricity
+
+            // The focus of the ellipse (where the Sun is)
+            const focus = a * e;
+
+            // Create an elliptical curve for the orbit
+            const numPoints = 500;
+            const points = [];
+            for (let i = 0; i <= numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                const r = a * (1 - e * e) / (1 + e * Math.cos(angle));
+                points.push(new THREE.Vector3(r * Math.cos(angle) - focus, 0, r * Math.sin(angle)));
+            }
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const orbitMaterial = new THREE.LineBasicMaterial({ color: cometInfoData.orbitColor, transparent: true, opacity: orbitsVisible ? 0.4 : 0.0 });
+            const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
+            orbit.rotation.x = Math.PI / 2; // Orient horizontally
+            orbit.rotation.y = tilt; // Apply tilt
+            scene.add(orbit);
+            orbits.push(orbit);
+
+            // Label
+            const label = createLabel(cometInfoData.name);
+            nucleus.add(label);
+            nucleus.userData.label = label;
+            
+            cometGroup.cometMesh = nucleus;
+            cometGroup.tailMesh = tail;
+            cometGroup.orbitPath = points; // Store path points for animation
+            cometGroup.currentOrbitIndex = 0;
+
+            cometGroup.update = function(time) {
+                // Animate comet along its path based on orbitalPeriod
+                // A simplified approach: move along the pre-calculated points
+                const orbitProgress = (time / (orbitalPeriod * 365.25)) % 1; // Normalize time to a 0-1 range based on orbital period in days
+                this.currentOrbitIndex = Math.floor(orbitProgress * (this.orbitPath.length - 1));
+                const currentPoint = this.orbitPath[this.currentOrbitIndex];
+                
+                // Adjust position based on tilt (simple rotation of the group)
+                const tempVec = new THREE.Vector3(currentPoint.x, currentPoint.y, currentPoint.z);
+                tempVec.applyAxisAngle(new THREE.Vector3(0, 1, 0), tilt); // Apply tilt around Y-axis for orbital plane
+                this.position.copy(tempVec);
+
+                // Make the tail point away from the sun (opposite to the current position vector)
+                const sunPosition = new THREE.Vector3(0,0,0);
+                const directionToSun = new THREE.Vector3().subVectors(sunPosition, this.position).normalize();
+                this.tailMesh.lookAt(directionToSun.multiplyScalar(-1)); // Look away from the sun
+
+                // Simple nucleus rotation
+                this.cometMesh.rotation.y += 0.01;
+
+                // Adjust tail opacity based on distance from sun (brighter near perihelion)
+                const distanceToSun = this.position.length();
+                const opacity = Math.max(0.1, Math.min(1.0, 10 / distanceToSun)); // Closer = brighter
+                this.tailMesh.material.opacity = opacity;
+            };
+            comets.push(cometGroup); // Add to the comets array
+            return cometGroup;
+        }
+
 
         // Create planets and moons 
         planets.mercury = createPlanet({
@@ -1615,6 +1818,34 @@
             orbitSpeed: 0.0005, // Lower speed due to its distant orbit
             rotationSpeed: 0.005
         });
+
+        // Add Asteroid Belt
+        const asteroidBelt = createAsteroidBelt(
+            planetDistances.mars * 1.2, // Start slightly after Mars
+            planetDistances.jupiter * 0.8, // End slightly before Jupiter
+            1000, // Number of asteroids
+            [0.05, 0.2] // Size range for asteroids
+        );
+        planets.asteroidbelt = asteroidBelt; // Add to planets object for potential selection/info
+
+        // Add Comets
+        const halley = createComet({
+            name: "Halley",
+            perihelion: 0.587 * 150, // Scaled AU to scene units
+            aphelion: 35.082 * 150, // Scaled AU to scene units
+            orbitalPeriod: 75, // Years
+            tilt: Math.PI / 6 // Example tilt
+        });
+        planets.halley = halley;
+
+        const halebopp = createComet({
+            name: "Hale-Bopp",
+            perihelion: 0.914 * 150, // Scaled AU to scene units
+            aphelion: 370 * 150, // Scaled AU to scene units
+            orbitalPeriod: 2533, // Years
+            tilt: Math.PI / 4 // Example tilt
+        });
+        planets.halebopp = halebopp;
 
         // Planet selection system
         const raycaster = new THREE.Raycaster();
